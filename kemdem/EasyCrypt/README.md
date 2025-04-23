@@ -7,8 +7,9 @@
 
 TODO
 
-The proof as currently formalized mainly follows Boneh and Shoup, with some
-game-based structuring.
+The proof as currently formalized mainly follows [Boneh and
+Shoup](https://toc.cryptobook.us/) (see Exercise 11.9 of version 0.6), with
+some game-based structuring.
 
 ## Instructions to run
 
