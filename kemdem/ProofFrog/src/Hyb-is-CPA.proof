@@ -1,0 +1,223 @@
+// Proof that the hybrid public key encryption scheme constructed following the 
+// KEM-DEM paradigm is CPA-secure, assuming that the KEM is CPA-secure and the
+// symmetric encryption scheme satisfies one-time secrecy.
+
+// Based on Exercise 11.9 of Boneh and Shoup's "Graduate Course in 
+// Applied Cryptography" (https://toc.cryptobook.us/).
+// Note that this example assumes that KEM decapsulation and symmetric
+// decryption always succeed.
+
+// The main idea of the proof is start from the public key encryption scheme encrypting the
+// left message, and transform it to one that encrypts the right message. 
+
+// The steps of the proof are as follows:
+// - Game 0: The hybrid scheme encrypts the left message using the real symmetric key.
+// - Game 1: The hybrid scheme encrypts the left message using a *random* symmetric key 
+//           (sampled randomly from the symmetric key space).
+// - Indistinguishability of Game 0 and Game 1 based on CPA-security of the KEM.
+// - Game 2: The hybrid scheme encrypts the left message using a random symmetric key
+//           *(generated using the symmetric key encryption scheme's key generation 
+//           algorithm)*. This step is necessary because we defined symmetric key 
+//           encryption schemes to have a key generation algorithm.
+// - Indistinguishability of Game 1 and Game 2 based on uniformity of symmetric key 
+//   generation.
+// - Game 3: The hybrid scheme encrypts the *right* message using a random symmetric key
+//           (generated using the symmetric key encryption scheme's key generation 
+//           algorithm).
+// - Indistinguishability of Game 2 and Game 3 based on one-time secrecy of the symmetric
+//   key encryption scheme.
+// Now we reverse the above steps:
+// - Game 4: The hybrid scheme encrypts the right message using a random symmetric key 
+//           *(sampled randomly from the symmetric key space)*.
+// - Indistinguishability of Game 3 and Game 4 based on uniformity of symmetric key
+//   generation.
+// - Game 5: The hybrid scheme encrypts the right message using the *real* symmetric key.
+// - Indistinguishability of Game 4 and Game 5 based on CPA-security of the KEM.
+
+import 'SymEnc.primitive';
+import 'SymEnc-OTS.game';
+import 'KEM.primitive';
+import 'KEM-CPA.game';
+import 'PKE.primitive';
+import 'PKE-CPA.game';
+import 'Hyb.scheme';
+
+Game Game0(KEM K, SymEnc E, Hyb H) {
+    K.PublicKey pk;
+    K.SecretKey sk;
+    Void Initialize() { 
+        K.PublicKey * K.SecretKey k = K.KeyGen();
+        pk = k[0];
+        sk = k[1];
+    }
+    H.PublicKey PK() { 
+        return pk;
+    }
+    H.Ciphertext Challenge(H.Message mL, H.Message mR) { 
+        K.Ciphertext * K.SharedSecret x = K.Encaps(pk);
+        K.Ciphertext c_kem = x[0];
+        K.SharedSecret k_dem = x[1];
+        E.Ciphertext c_dem = E.Enc(k_dem, mL);
+        return [c_kem, c_dem];
+    }
+}
+
+// Reduction for hop from Game 0 to Game 1
+// - Reduction to CPA security of the KEM. The reduction uses the shared secret
+//   from the KEM CPA challenger, which is either real (= Game 0) or random (= Game 1).
+Reduction R1(SymEnc E, KEM K, Hyb H) compose CPAKEM(K) against CPA(H).Adversary {
+    H.PublicKey PK() {
+        return challenger.PK();
+    }
+    H.Ciphertext Challenge(H.Message mL, H.Message mR) {
+        K.Ciphertext * K.SharedSecret y = challenger.Challenge();
+        K.Ciphertext c_kem = y[0];
+        K.SharedSecret k_dem = y[1];
+        E.Ciphertext c_dem = E.Enc(k_dem, mL);
+        return [c_kem, c_dem];
+    }
+}
+
+Game Game1(KEM K, SymEnc E, Hyb H) {
+    K.PublicKey pk;
+    K.SecretKey sk;
+    Void Initialize() { 
+        K.PublicKey * K.SecretKey k = K.KeyGen();
+        pk = k[0];
+        sk = k[1];
+    }
+    H.PublicKey PK() { 
+        return pk;
+    }
+    H.Ciphertext Challenge(H.Message mL, H.Message mR) { 
+        K.Ciphertext * K.SharedSecret x = K.Encaps(pk);
+        K.Ciphertext c_kem = x[0];
+        K.SharedSecret k_dem <- K.SharedSecret;
+        E.Ciphertext c_dem = E.Enc(k_dem, mL);
+        return [c_kem, c_dem];
+    }
+}
+
+// Reduction for hop from Game 1 to Game 2
+// - Reduction to one-time secrecy of the symmetric encryption scheme. The reduction uses the
+//   challenger to encrypt either mL (= Game 1) or mR (= Game 2).
+Reduction R2(SymEnc E, KEM K, Hyb H) compose OTS(E) against CPA(H).Adversary {
+    K.PublicKey pk;
+    K.SecretKey sk;
+    Void Initialize() {
+        K.PublicKey * K.SecretKey k = K.KeyGen();
+        pk = k[0];
+        sk = k[1];
+    }
+    H.PublicKey PK() { 
+        return pk;
+    }
+
+    H.Ciphertext Challenge(H.Message mL, H.Message mR) {
+        K.Ciphertext * K.SharedSecret x = K.Encaps(pk);
+        K.Ciphertext c_kem = x[0];
+        E.Ciphertext c_sym = challenger.Eavesdrop(mL, mR);
+        return [c_kem, c_sym];
+    }
+}
+
+Game Game2(KEM K, SymEnc E, Hyb H) {
+    K.PublicKey pk;
+    K.SecretKey sk;
+    Void Initialize() { 
+        K.PublicKey * K.SecretKey k = K.KeyGen();
+        pk = k[0];
+        sk = k[1];
+    }
+    H.PublicKey PK() { 
+        return pk;
+    }
+    H.Ciphertext Challenge(H.Message mL, H.Message mR) { 
+        K.Ciphertext * K.SharedSecret x = K.Encaps(pk);
+        K.Ciphertext c_kem = x[0];
+        K.SharedSecret k_dem <- K.SharedSecret;
+        E.Ciphertext c_dem = E.Enc(k_dem, mR);
+        return [c_kem, c_dem];
+    }
+}
+
+// Reduction for hop from Game 2 to Game 3
+// - Reduction to CPA security of the KEM. The reduction uses the shared secret
+//   from the KEM CPA challenger, which is either random (= Game 2) or real (= Game 3).
+Reduction R3(SymEnc E, KEM K, Hyb H) compose CPAKEM(K) against CPA(H).Adversary {
+    H.PublicKey PK() {
+        return challenger.PK();
+    }
+    H.Ciphertext Challenge(H.Message mL, H.Message mR) {
+        K.Ciphertext * K.SharedSecret y = challenger.Challenge();
+        K.Ciphertext c_kem = y[0];
+        K.SharedSecret k_dem = y[1];
+        E.Ciphertext c_dem = E.Enc(k_dem, mR);
+        return [c_kem, c_dem];
+    }
+}
+
+Game Game3(KEM K, SymEnc E, Hyb H) {
+    K.PublicKey pk;
+    K.SecretKey sk;
+    Void Initialize() { 
+        K.PublicKey * K.SecretKey k = K.KeyGen();
+        pk = k[0];
+        sk = k[1];
+    }
+    H.PublicKey PK() { 
+        return pk;
+    }
+    H.Ciphertext Challenge(H.Message mL, H.Message mR) { 
+        K.Ciphertext * K.SharedSecret x = K.Encaps(pk);
+        K.Ciphertext c_kem = x[0];
+        K.SharedSecret k_dem = x[1];
+        E.Ciphertext c_dem = E.Enc(k_dem, mR);
+        return [c_kem, c_dem];
+    }
+}
+
+proof:
+
+let:
+    Set SymMessageSpace;
+    Set KEMSharedSecretSpace;
+    Set SymCiphertextSpace;
+    Set KEMCiphertextSpace;
+
+    Set PubKeySpace;
+    Set SecretKeySpace;
+
+    // Notice that the symmetric encryption scheme's key space is equal to the 
+    // KEM shared secret space.
+    SymEnc E = SymEnc(SymMessageSpace, SymCiphertextSpace, KEMSharedSecretSpace);
+    KEM K = KEM(KEMSharedSecretSpace, KEMCiphertextSpace, PubKeySpace, SecretKeySpace);
+    Hyb H = Hyb(K, E);
+
+assume:
+    // If symmetric encryption scheme E satisfies one-time secrecy ...
+    OTS(E);
+    // ... and KEM K satisfies CPA-security...
+    CPAKEM(K);
+
+theorem:
+    // ... then the KEM-DEM public key encryption scheme H satisfies CPA security.
+    CPA(H);
+
+games:
+    // Game 0
+    CPA(H).Left against CPA(H).Adversary;
+    Game0(K, E, H) against CPA(H).Adversary;
+    CPAKEM(K).Real compose R1(E, K, H) against CPA(H).Adversary;
+    // Game 1
+    CPAKEM(K).Random compose R1(E, K, H) against CPA(H).Adversary;
+    Game1(K, E, H) against CPA(H).Adversary;
+    OTS(E).Left compose R2(E, K, H) against CPA(H).Adversary;
+    // Game 2
+    OTS(E).Right compose R2(E, K, H) against CPA(H).Adversary;
+    Game2(K, E, H) against CPA(H).Adversary;
+    CPAKEM(K).Random compose R3(E, K, H) against CPA(H).Adversary;
+    // Game 3
+    CPAKEM(K).Real compose R3(E, K, H) against CPA(H).Adversary;
+    Game3(K, E, H) against CPA(H).Adversary;
+    CPA(H).Right against CPA(H).Adversary;

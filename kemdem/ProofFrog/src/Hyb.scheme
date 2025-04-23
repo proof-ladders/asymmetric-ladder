@@ -1,0 +1,31 @@
+import 'KEM.primitive';
+import 'SymEnc.primitive';
+import 'PKE.primitive';
+
+Scheme Hyb(KEM K, SymEnc E) extends PKE {
+    requires K.SharedSecret subsets E.Key;
+
+    Set PublicKey = K.PublicKey;
+    Set SecretKey = K.SecretKey;
+    Set Message = E.Message;
+    Set Ciphertext = K.Ciphertext * E.Ciphertext;
+
+    PublicKey * SecretKey KeyGen() {
+        return K.KeyGen();
+    }
+
+    Ciphertext Enc(PublicKey pk, Message m) {
+        K.Ciphertext * K.SharedSecret x = K.Encaps(pk);
+        K.Ciphertext c_kem = x[0];
+        E.Key k_dem = x[1];
+        E.Ciphertext c_dem = E.Enc(k_dem, m);
+        return [c_kem, c_dem];
+    }
+
+    Message Dec(SecretKey sk, Ciphertext c) {
+        K.Ciphertext c_kem = c[0];
+        E.Ciphertext c_dem = c[1];
+        K.SharedSecret k_dem = K.Decaps(sk, c_kem);
+        return E.Dec(k_dem, c_dem);
+    }
+}

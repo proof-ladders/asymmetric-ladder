@@ -1,4 +1,4 @@
-Primitive PubKeyEnc(Set MessageSpace, Set CiphertextSpace, Set PKeySpace, Set SKeySpace) {
+Primitive PKE(Set MessageSpace, Set CiphertextSpace, Set PKeySpace, Set SKeySpace) {
     Set Message = MessageSpace;
     Set Ciphertext = CiphertextSpace;
     Set PublicKey = PKeySpace;
