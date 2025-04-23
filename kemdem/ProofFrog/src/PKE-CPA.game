@@ -14,7 +14,7 @@ Game Left(PKE E) {
         return pk;
     }
 
-    E.Ciphertext Challenge(E.Message mL, E.Message mR) {
+    E.Ciphertext ENC(E.Message mL, E.Message mR) {
         return E.Enc(pk, mL);
     }
 }
@@ -33,7 +33,7 @@ Game Right(PKE E) {
         return pk;
     }
 
-    E.Ciphertext Challenge(E.Message mL, E.Message mR) {
+    E.Ciphertext ENC(E.Message mL, E.Message mR) {
         return E.Enc(pk, mR);
     }
 }

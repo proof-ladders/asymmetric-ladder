@@ -52,7 +52,7 @@ Here is the corresponding definition in ProofFrog. The only difference is syntac
 
 ```
 Game Left(SymEnc E) {
-    E.Ciphertext Eavesdrop(E.Message mL, E.Message mR) {
+    E.Ciphertext ENC(E.Message mL, E.Message mR) {
         E.Key k <- E.Key;
         E.Ciphertext c = E.Enc(k, mL);
         return c;
@@ -60,7 +60,7 @@ Game Left(SymEnc E) {
 }
 
 Game Right(SymEnc E) {
-    E.Ciphertext Eavesdrop(E.Message mL, E.Message mR) {
+    E.Ciphertext ENC(E.Message mL, E.Message mR) {
         E.Key k <- E.Key;
         E.Ciphertext c = E.Enc(k, mR);
         return c;
@@ -118,7 +118,7 @@ Game Real(KEM K) {
         return pk;
     }
 
-    K.SharedSecret * K.Ciphertext Challenge() {
+    K.SharedSecret * K.Ciphertext ENC() {
         K.Ciphertext * K.SharedSecret rsp = K.Encaps(pk);
         return rsp;
     }
@@ -138,7 +138,7 @@ Game Random(KEM K) {
         return pk;
     }
 
-    K.SharedSecret * K.Ciphertext Challenge() {
+    K.SharedSecret * K.Ciphertext ENC() {
         K.Ciphertext * K.SharedSecret rsp = K.Encaps(pk);
         K.Ciphertext ctxt = rsp[0];
         K.SharedSecret ss <- K.SharedSecret;
@@ -199,7 +199,7 @@ Game Left(PubKeyEnc E) {
         return pk;
     }
 
-    E.Ciphertext Challenge(E.Message mL, E.Message mR) {
+    E.Ciphertext ENC(E.Message mL, E.Message mR) {
         return E.Enc(pk, mL);
     }
 }
@@ -218,7 +218,7 @@ Game Right(PubKeyEnc E) {
         return pk;
     }
 
-    E.Ciphertext Challenge(E.Message mL, E.Message mR) {
+    E.Ciphertext ENC(E.Message mL, E.Message mR) {
         return E.Enc(pk, mR);
     }
 }

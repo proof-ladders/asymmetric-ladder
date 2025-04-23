@@ -53,7 +53,7 @@ Game Game0(KEM K, SymEnc E, Hyb H) {
     H.PublicKey PK() { 
         return pk;
     }
-    H.Ciphertext Challenge(H.Message mL, H.Message mR) { 
+    H.Ciphertext ENC(H.Message mL, H.Message mR) { 
         K.Ciphertext * K.SharedSecret x = K.Encaps(pk);
         K.Ciphertext c_kem = x[0];
         K.SharedSecret k_dem = x[1];
@@ -69,8 +69,8 @@ Reduction R1(SymEnc E, KEM K, Hyb H) compose CPAKEM(K) against CPA(H).Adversary 
     H.PublicKey PK() {
         return challenger.PK();
     }
-    H.Ciphertext Challenge(H.Message mL, H.Message mR) {
-        K.Ciphertext * K.SharedSecret y = challenger.Challenge();
+    H.Ciphertext ENC(H.Message mL, H.Message mR) {
+        K.Ciphertext * K.SharedSecret y = challenger.ENC();
         K.Ciphertext c_kem = y[0];
         K.SharedSecret k_dem = y[1];
         E.Ciphertext c_dem = E.Enc(k_dem, mL);
@@ -89,7 +89,7 @@ Game Game1(KEM K, SymEnc E, Hyb H) {
     H.PublicKey PK() { 
         return pk;
     }
-    H.Ciphertext Challenge(H.Message mL, H.Message mR) { 
+    H.Ciphertext ENC(H.Message mL, H.Message mR) { 
         K.Ciphertext * K.SharedSecret x = K.Encaps(pk);
         K.Ciphertext c_kem = x[0];
         K.SharedSecret k_dem <- K.SharedSecret;
@@ -113,10 +113,10 @@ Reduction R2(SymEnc E, KEM K, Hyb H) compose OTS(E) against CPA(H).Adversary {
         return pk;
     }
 
-    H.Ciphertext Challenge(H.Message mL, H.Message mR) {
+    H.Ciphertext ENC(H.Message mL, H.Message mR) {
         K.Ciphertext * K.SharedSecret x = K.Encaps(pk);
         K.Ciphertext c_kem = x[0];
-        E.Ciphertext c_sym = challenger.Eavesdrop(mL, mR);
+        E.Ciphertext c_sym = challenger.ENC(mL, mR);
         return [c_kem, c_sym];
     }
 }
@@ -132,7 +132,7 @@ Game Game2(KEM K, SymEnc E, Hyb H) {
     H.PublicKey PK() { 
         return pk;
     }
-    H.Ciphertext Challenge(H.Message mL, H.Message mR) { 
+    H.Ciphertext ENC(H.Message mL, H.Message mR) { 
         K.Ciphertext * K.SharedSecret x = K.Encaps(pk);
         K.Ciphertext c_kem = x[0];
         K.SharedSecret k_dem <- K.SharedSecret;
@@ -148,8 +148,8 @@ Reduction R3(SymEnc E, KEM K, Hyb H) compose CPAKEM(K) against CPA(H).Adversary 
     H.PublicKey PK() {
         return challenger.PK();
     }
-    H.Ciphertext Challenge(H.Message mL, H.Message mR) {
-        K.Ciphertext * K.SharedSecret y = challenger.Challenge();
+    H.Ciphertext ENC(H.Message mL, H.Message mR) {
+        K.Ciphertext * K.SharedSecret y = challenger.ENC();
         K.Ciphertext c_kem = y[0];
         K.SharedSecret k_dem = y[1];
         E.Ciphertext c_dem = E.Enc(k_dem, mR);
@@ -168,7 +168,7 @@ Game Game3(KEM K, SymEnc E, Hyb H) {
     H.PublicKey PK() { 
         return pk;
     }
-    H.Ciphertext Challenge(H.Message mL, H.Message mR) { 
+    H.Ciphertext ENC(H.Message mL, H.Message mR) { 
         K.Ciphertext * K.SharedSecret x = K.Encaps(pk);
         K.Ciphertext c_kem = x[0];
         K.SharedSecret k_dem = x[1];

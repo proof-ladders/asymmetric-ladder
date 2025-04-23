@@ -1,7 +1,7 @@
 import 'SymEnc.primitive';
 
 Game Left(SymEnc E) {
-    E.Ciphertext Eavesdrop(E.Message mL, E.Message mR) {
+    E.Ciphertext ENC(E.Message mL, E.Message mR) {
         E.Key k <- E.Key;
         E.Ciphertext c = E.Enc(k, mL);
         return c;
@@ -9,7 +9,7 @@ Game Left(SymEnc E) {
 }
 
 Game Right(SymEnc E) {
-    E.Ciphertext Eavesdrop(E.Message mL, E.Message mR) {
+    E.Ciphertext ENC(E.Message mL, E.Message mR) {
         E.Key k <- E.Key;
         E.Ciphertext c = E.Enc(k, mR);
         return c;

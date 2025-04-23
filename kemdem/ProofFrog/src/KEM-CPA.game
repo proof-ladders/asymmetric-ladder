@@ -21,7 +21,7 @@ Game Real(KEM K) {
         return pk;
     }
 
-    K.SharedSecret * K.Ciphertext Challenge() {
+    K.SharedSecret * K.Ciphertext ENC() {
         K.Ciphertext * K.SharedSecret rsp = K.Encaps(pk);
         return rsp;
     }
@@ -41,7 +41,7 @@ Game Random(KEM K) {
         return pk;
     }
 
-    K.SharedSecret * K.Ciphertext Challenge() {
+    K.SharedSecret * K.Ciphertext ENC() {
         K.Ciphertext * K.SharedSecret rsp = K.Encaps(pk);
         K.Ciphertext ctxt = rsp[0];
         K.SharedSecret ss <- K.SharedSecret;

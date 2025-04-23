@@ -14,7 +14,7 @@ Game Left() {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace H.Enc@x0 = K.Encaps(pk);
     KEMCiphertextSpace H.Enc@c_kem0 = H.Enc@x0[0];
     KEMSharedSecretSpace H.Enc@k_dem0 = H.Enc@x0[1];
@@ -35,7 +35,7 @@ Game Game0() {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
     KEMSharedSecretSpace k_dem = x[1];
@@ -54,7 +54,7 @@ Game Left() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMCiphertextSpace v3 = v2[0];
     KEMSharedSecretSpace v4 = v2[1];
@@ -73,7 +73,7 @@ Game Game0() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMCiphertextSpace v3 = v2[0];
     KEMSharedSecretSpace v4 = v2[1];
@@ -89,8 +89,8 @@ Reduction R1() compose CPAKEM(K) against CPA(H).Adversary {
   PubKeySpace PK() { 
     return challenger.PK();
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.Challenge();
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.ENC();
     KEMCiphertextSpace c_kem = y[0];
     KEMSharedSecretSpace k_dem = y[1];
     SymCiphertextSpace c_dem = E.Enc(k_dem, mL);
@@ -110,7 +110,7 @@ Game Real() {
   PubKeySpace PK() { 
     return challenger@pk;
   }
-  KEMSharedSecretSpace * KEMCiphertextSpace Challenge() { 
+  KEMSharedSecretSpace * KEMCiphertextSpace ENC() { 
     KEMCiphertextSpace * KEMSharedSecretSpace rsp = K.Encaps(challenger@pk);
     return rsp;
   }
@@ -131,7 +131,7 @@ Game Game0() {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
     KEMSharedSecretSpace k_dem = x[1];
@@ -152,9 +152,9 @@ Game Inlined() {
   PubKeySpace PK() { 
     return challenger@pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMCiphertextSpace * KEMSharedSecretSpace challenger.Challenge@rsp0 = K.Encaps(challenger@pk);
-    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.Challenge@rsp0;
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace challenger.ENC@rsp0 = K.Encaps(challenger@pk);
+    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.ENC@rsp0;
     KEMCiphertextSpace c_kem = y[0];
     KEMSharedSecretSpace k_dem = y[1];
     SymCiphertextSpace c_dem = E.Enc(k_dem, mL);
@@ -172,7 +172,7 @@ Game Game0() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMCiphertextSpace v3 = v2[0];
     KEMSharedSecretSpace v4 = v2[1];
@@ -191,7 +191,7 @@ Game Inlined() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMCiphertextSpace v3 = v2[0];
     KEMSharedSecretSpace v4 = v2[1];
@@ -212,8 +212,8 @@ Reduction R1() compose CPAKEM(K) against CPA(H).Adversary {
   PubKeySpace PK() { 
     return challenger.PK();
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.Challenge();
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.ENC();
     KEMCiphertextSpace c_kem = y[0];
     KEMSharedSecretSpace k_dem = y[1];
     SymCiphertextSpace c_dem = E.Enc(k_dem, mL);
@@ -233,7 +233,7 @@ Game Random() {
   PubKeySpace PK() { 
     return challenger@pk;
   }
-  KEMSharedSecretSpace * KEMCiphertextSpace Challenge() { 
+  KEMSharedSecretSpace * KEMCiphertextSpace ENC() { 
     KEMCiphertextSpace * KEMSharedSecretSpace rsp = K.Encaps(challenger@pk);
     KEMCiphertextSpace ctxt = rsp[0];
     KEMSharedSecretSpace ss <- KEMSharedSecretSpace;
@@ -256,11 +256,11 @@ Game Inlined() {
   PubKeySpace PK() { 
     return challenger@pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMCiphertextSpace * KEMSharedSecretSpace challenger.Challenge@rsp0 = K.Encaps(challenger@pk);
-    KEMCiphertextSpace challenger.Challenge@ctxt0 = challenger.Challenge@rsp0[0];
-    KEMSharedSecretSpace challenger.Challenge@ss0 <- KEMSharedSecretSpace;
-    KEMCiphertextSpace * KEMSharedSecretSpace y = [challenger.Challenge@ctxt0, challenger.Challenge@ss0];
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace challenger.ENC@rsp0 = K.Encaps(challenger@pk);
+    KEMCiphertextSpace challenger.ENC@ctxt0 = challenger.ENC@rsp0[0];
+    KEMSharedSecretSpace challenger.ENC@ss0 <- KEMSharedSecretSpace;
+    KEMCiphertextSpace * KEMSharedSecretSpace y = [challenger.ENC@ctxt0, challenger.ENC@ss0];
     KEMCiphertextSpace c_kem = y[0];
     KEMSharedSecretSpace k_dem = y[1];
     SymCiphertextSpace c_dem = E.Enc(k_dem, mL);
@@ -280,7 +280,7 @@ Game Game1() {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
     KEMSharedSecretSpace k_dem <- KEMSharedSecretSpace;
@@ -299,7 +299,7 @@ Game Inlined() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
     KEMCiphertextSpace v4 = v2[0];
@@ -318,7 +318,7 @@ Game Game1() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
     KEMCiphertextSpace v4 = v2[0];
@@ -341,17 +341,17 @@ Reduction R2() compose OTS(E) against CPA(H).Adversary {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
-    SymCiphertextSpace c_sym = challenger.Eavesdrop(mL, mR);
+    SymCiphertextSpace c_sym = challenger.ENC(mL, mR);
     return [c_kem, c_sym];
   }
 }
 
 Challenger:
 Game Left() {
-  SymCiphertextSpace Eavesdrop(SymMessageSpace mL, SymMessageSpace mR) { 
+  SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMSharedSecretSpace k <- KEMSharedSecretSpace;
     SymCiphertextSpace c = E.Enc(k, mL);
     return c;
@@ -373,7 +373,7 @@ Game Game1() {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
     KEMSharedSecretSpace k_dem <- KEMSharedSecretSpace;
@@ -394,12 +394,12 @@ Game Inlined() {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
-    KEMSharedSecretSpace challenger.Eavesdrop@k2 <- KEMSharedSecretSpace;
-    SymCiphertextSpace challenger.Eavesdrop@c2 = E.Enc(challenger.Eavesdrop@k2, mL);
-    SymCiphertextSpace c_sym = challenger.Eavesdrop@c2;
+    KEMSharedSecretSpace challenger.ENC@k2 <- KEMSharedSecretSpace;
+    SymCiphertextSpace challenger.ENC@c2 = E.Enc(challenger.ENC@k2, mL);
+    SymCiphertextSpace c_sym = challenger.ENC@c2;
     return [c_kem, c_sym];
   }
 }
@@ -414,7 +414,7 @@ Game Game1() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
     KEMCiphertextSpace v4 = v2[0];
@@ -433,7 +433,7 @@ Game Inlined() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
     KEMCiphertextSpace v4 = v2[0];
@@ -461,17 +461,17 @@ Reduction R2() compose OTS(E) against CPA(H).Adversary {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
-    SymCiphertextSpace c_sym = challenger.Eavesdrop(mL, mR);
+    SymCiphertextSpace c_sym = challenger.ENC(mL, mR);
     return [c_kem, c_sym];
   }
 }
 
 Challenger:
 Game Right() {
-  SymCiphertextSpace Eavesdrop(SymMessageSpace mL, SymMessageSpace mR) { 
+  SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMSharedSecretSpace k <- KEMSharedSecretSpace;
     SymCiphertextSpace c = E.Enc(k, mR);
     return c;
@@ -493,12 +493,12 @@ Game Inlined() {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
-    KEMSharedSecretSpace challenger.Eavesdrop@k2 <- KEMSharedSecretSpace;
-    SymCiphertextSpace challenger.Eavesdrop@c2 = E.Enc(challenger.Eavesdrop@k2, mR);
-    SymCiphertextSpace c_sym = challenger.Eavesdrop@c2;
+    KEMSharedSecretSpace challenger.ENC@k2 <- KEMSharedSecretSpace;
+    SymCiphertextSpace challenger.ENC@c2 = E.Enc(challenger.ENC@k2, mR);
+    SymCiphertextSpace c_sym = challenger.ENC@c2;
     return [c_kem, c_sym];
   }
 }
@@ -515,7 +515,7 @@ Game Game2() {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
     KEMSharedSecretSpace k_dem <- KEMSharedSecretSpace;
@@ -534,7 +534,7 @@ Game Inlined() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
     KEMCiphertextSpace v4 = v2[0];
@@ -553,7 +553,7 @@ Game Game2() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
     KEMCiphertextSpace v4 = v2[0];
@@ -569,8 +569,8 @@ Reduction R3() compose CPAKEM(K) against CPA(H).Adversary {
   PubKeySpace PK() { 
     return challenger.PK();
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.Challenge();
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.ENC();
     KEMCiphertextSpace c_kem = y[0];
     KEMSharedSecretSpace k_dem = y[1];
     SymCiphertextSpace c_dem = E.Enc(k_dem, mR);
@@ -590,7 +590,7 @@ Game Random() {
   PubKeySpace PK() { 
     return challenger@pk;
   }
-  KEMSharedSecretSpace * KEMCiphertextSpace Challenge() { 
+  KEMSharedSecretSpace * KEMCiphertextSpace ENC() { 
     KEMCiphertextSpace * KEMSharedSecretSpace rsp = K.Encaps(challenger@pk);
     KEMCiphertextSpace ctxt = rsp[0];
     KEMSharedSecretSpace ss <- KEMSharedSecretSpace;
@@ -613,7 +613,7 @@ Game Game2() {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
     KEMSharedSecretSpace k_dem <- KEMSharedSecretSpace;
@@ -634,11 +634,11 @@ Game Inlined() {
   PubKeySpace PK() { 
     return challenger@pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMCiphertextSpace * KEMSharedSecretSpace challenger.Challenge@rsp0 = K.Encaps(challenger@pk);
-    KEMCiphertextSpace challenger.Challenge@ctxt0 = challenger.Challenge@rsp0[0];
-    KEMSharedSecretSpace challenger.Challenge@ss0 <- KEMSharedSecretSpace;
-    KEMCiphertextSpace * KEMSharedSecretSpace y = [challenger.Challenge@ctxt0, challenger.Challenge@ss0];
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace challenger.ENC@rsp0 = K.Encaps(challenger@pk);
+    KEMCiphertextSpace challenger.ENC@ctxt0 = challenger.ENC@rsp0[0];
+    KEMSharedSecretSpace challenger.ENC@ss0 <- KEMSharedSecretSpace;
+    KEMCiphertextSpace * KEMSharedSecretSpace y = [challenger.ENC@ctxt0, challenger.ENC@ss0];
     KEMCiphertextSpace c_kem = y[0];
     KEMSharedSecretSpace k_dem = y[1];
     SymCiphertextSpace c_dem = E.Enc(k_dem, mR);
@@ -656,7 +656,7 @@ Game Game2() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
     KEMCiphertextSpace v4 = v2[0];
@@ -675,7 +675,7 @@ Game Inlined() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
     KEMCiphertextSpace v4 = v2[0];
@@ -696,8 +696,8 @@ Reduction R3() compose CPAKEM(K) against CPA(H).Adversary {
   PubKeySpace PK() { 
     return challenger.PK();
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.Challenge();
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.ENC();
     KEMCiphertextSpace c_kem = y[0];
     KEMSharedSecretSpace k_dem = y[1];
     SymCiphertextSpace c_dem = E.Enc(k_dem, mR);
@@ -717,7 +717,7 @@ Game Real() {
   PubKeySpace PK() { 
     return challenger@pk;
   }
-  KEMSharedSecretSpace * KEMCiphertextSpace Challenge() { 
+  KEMSharedSecretSpace * KEMCiphertextSpace ENC() { 
     KEMCiphertextSpace * KEMSharedSecretSpace rsp = K.Encaps(challenger@pk);
     return rsp;
   }
@@ -738,9 +738,9 @@ Game Inlined() {
   PubKeySpace PK() { 
     return challenger@pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMCiphertextSpace * KEMSharedSecretSpace challenger.Challenge@rsp0 = K.Encaps(challenger@pk);
-    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.Challenge@rsp0;
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace challenger.ENC@rsp0 = K.Encaps(challenger@pk);
+    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.ENC@rsp0;
     KEMCiphertextSpace c_kem = y[0];
     KEMSharedSecretSpace k_dem = y[1];
     SymCiphertextSpace c_dem = E.Enc(k_dem, mR);
@@ -760,7 +760,7 @@ Game Game3() {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
     KEMSharedSecretSpace k_dem = x[1];
@@ -779,7 +779,7 @@ Game Inlined() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMCiphertextSpace v3 = v2[0];
     KEMSharedSecretSpace v4 = v2[1];
@@ -798,7 +798,7 @@ Game Game3() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMCiphertextSpace v3 = v2[0];
     KEMSharedSecretSpace v4 = v2[1];
@@ -824,7 +824,7 @@ Game Game3() {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
     KEMSharedSecretSpace k_dem = x[1];
@@ -845,7 +845,7 @@ Game Right() {
   PubKeySpace PK() { 
     return pk;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace H.Enc@x0 = K.Encaps(pk);
     KEMCiphertextSpace H.Enc@c_kem0 = H.Enc@x0[0];
     KEMSharedSecretSpace H.Enc@k_dem0 = H.Enc@x0[1];
@@ -864,7 +864,7 @@ Game Game3() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMCiphertextSpace v3 = v2[0];
     KEMSharedSecretSpace v4 = v2[1];
@@ -883,7 +883,7 @@ Game Right() {
   PubKeySpace PK() { 
     return field1;
   }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+  KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMCiphertextSpace v3 = v2[0];
     KEMSharedSecretSpace v4 = v2[1];
