@@ -5,24 +5,25 @@
 //  - Random: The adversary receives a real KEM ciphertext and an 
 //            independent randomly sampled shared secret
 
-import 'examples/Primitives/KEM.primitive';
+import 'KEM.primitive';
 
 Game Real(KEM K) {
     K.PublicKey pk;
     K.SecretKey sk;
 
-    K.PublicKey Initialize() {
+    Void Initialize() {
         K.PublicKey * K.SecretKey k = K.KeyGen();
         pk = k[0];
         sk = k[1];
+    }
+
+    K.PublicKey PK() {
         return pk;
     }
 
     K.SharedSecret * K.Ciphertext Challenge() {
-        K.SharedSecret * K.Ciphertext rsp = K.Encaps(pk);
-        K.SharedSecret ss = rsp[0];
-        K.Ciphertext ctxt = rsp[1];
-        return [ss, ctxt];
+        K.Ciphertext * K.SharedSecret rsp = K.Encaps(pk);
+        return rsp;
     }
 }
 
@@ -30,18 +31,21 @@ Game Random(KEM K) {
     K.PublicKey pk;
     K.SecretKey sk;
 
-    K.PublicKey Initialize() {
+    Void Initialize() {
         K.PublicKey * K.SecretKey k = K.KeyGen();
         pk = k[0];
         sk = k[1];
+    }
+
+    K.PublicKey PK() {
         return pk;
     }
 
     K.SharedSecret * K.Ciphertext Challenge() {
-        K.SharedSecret * K.Ciphertext rsp = K.Encaps(pk);
+        K.Ciphertext * K.SharedSecret rsp = K.Encaps(pk);
+        K.Ciphertext ctxt = rsp[0];
         K.SharedSecret ss <- K.SharedSecret;
-        K.Ciphertext ctxt = rsp[1];
-        return [ss, ctxt];
+        return [ctxt, ss];
     }
 }
 

@@ -1,300 +1,349 @@
 ===STEP 1===
-Reduction to apply:
-Reduction R1() compose CPAKEM(K) against CPA(KD).Adversary {
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace y = challenger.Challenge();
-    KEMSharedSecretSpace k_sym = y[0];
-    KEMCiphertextSpace c_kem = y[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mL);
-    return [c_kem, c_sym];
-  }
-}
-
-Challenger:
-Game Real() {
-  PubKeySpace pk;
-  SecretKeySpace sk;
-  PubKeySpace Initialize() { 
-    PubKeySpace * SecretKeySpace k = K.KeyGen();
-    challenger@pk = k[0];
-    challenger@sk = k[1];
-    return challenger@pk;
-  }
-  KEMSharedSecretSpace * KEMCiphertextSpace Challenge() { 
-    KEMSharedSecretSpace * KEMCiphertextSpace rsp = K.Encaps(challenger@pk);
-    KEMSharedSecretSpace ss = rsp[0];
-    KEMCiphertextSpace ctxt = rsp[1];
-    return [ss, ctxt];
-  }
-}
-
-Current: CPA(KD).Left against CPA(KD).Adversary;
-Hop To: CPAKEM(K).Real compose R1(E, K, KD) against CPA(KD).Adversary;
+Current: CPA(H).Left against CPA(H).Adversary;
+Hop To: Game0(K, E, H) against CPA(H).Adversary;
 
 SIMPLIFYING CURRENT GAME
 Game Left() {
   PubKeySpace pk;
   SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     pk = k[0];
     sk = k[1];
+  }
+  PubKeySpace PK() { 
     return pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace KD.Enc@x = K.Encaps(pk);
-    KEMSharedSecretSpace KD.Enc@k_sym = KD.Enc@x[0];
-    KEMCiphertextSpace KD.Enc@c_kem = KD.Enc@x[1];
-    SymCiphertextSpace KD.Enc@c_sym = E.Enc(KD.Enc@k_sym, mL);
-    return [KD.Enc@c_kem, KD.Enc@c_sym];
+    KEMCiphertextSpace * KEMSharedSecretSpace H.Enc@x0 = K.Encaps(pk);
+    KEMCiphertextSpace H.Enc@c_kem0 = H.Enc@x0[0];
+    KEMSharedSecretSpace H.Enc@k_dem0 = H.Enc@x0[1];
+    SymCiphertextSpace H.Enc@c_dem0 = E.Enc(H.Enc@k_dem0, mL);
+    return [H.Enc@c_kem0, H.Enc@c_dem0];
   }
 }
 
 SIMPLIFYING NEXT GAME
-Game Inlined() {
-  PubKeySpace challenger@pk;
-  SecretKeySpace challenger@sk;
-  PubKeySpace Initialize() { 
+Game Game0() {
+  PubKeySpace pk;
+  SecretKeySpace sk;
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
-    challenger@pk = k[0];
-    challenger@sk = k[1];
-    return challenger@pk;
+    pk = k[0];
+    sk = k[1];
+  }
+  PubKeySpace PK() { 
+    return pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace challenger.Challenge@rsp = K.Encaps(challenger@pk);
-    KEMSharedSecretSpace challenger.Challenge@ss = challenger.Challenge@rsp[0];
-    KEMCiphertextSpace challenger.Challenge@ctxt = challenger.Challenge@rsp[1];
-    KEMSharedSecretSpace * KEMCiphertextSpace y = [challenger.Challenge@ss, challenger.Challenge@ctxt];
-    KEMSharedSecretSpace k_sym = y[0];
-    KEMCiphertextSpace c_kem = y[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mL);
-    return [c_kem, c_sym];
+    KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
+    KEMCiphertextSpace c_kem = x[0];
+    KEMSharedSecretSpace k_dem = x[1];
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mL);
+    return [c_kem, c_dem];
   }
 }
 
 CURRENT
 Game Left() {
   PubKeySpace field1;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace v1 = K.KeyGen();
     field1 = v1[0];
+  }
+  PubKeySpace PK() { 
     return field1;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace v2 = K.Encaps(field1);
-    KEMSharedSecretSpace v3 = v2[0];
-    KEMCiphertextSpace v4 = v2[1];
-    SymCiphertextSpace v5 = E.Enc(v3, mL);
-    return [v4, v5];
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
+    KEMCiphertextSpace v3 = v2[0];
+    KEMSharedSecretSpace v4 = v2[1];
+    SymCiphertextSpace v5 = E.Enc(v4, mL);
+    return [v3, v5];
   }
 }
 
 NEXT
-Game Inlined() {
+Game Game0() {
   PubKeySpace field1;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace v1 = K.KeyGen();
     field1 = v1[0];
+  }
+  PubKeySpace PK() { 
     return field1;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace v2 = K.Encaps(field1);
-    KEMSharedSecretSpace v3 = v2[0];
-    KEMCiphertextSpace v4 = v2[1];
-    SymCiphertextSpace v5 = E.Enc(v3, mL);
-    return [v4, v5];
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
+    KEMCiphertextSpace v3 = v2[0];
+    KEMSharedSecretSpace v4 = v2[1];
+    SymCiphertextSpace v5 = E.Enc(v4, mL);
+    return [v3, v5];
   }
 }
 
 Inline Success!
 ===STEP 2===
-Current: CPAKEM(K).Real compose R1(E, K, KD) against CPA(KD).Adversary;
-Hop To: CPAKEM(K).Random compose R1(E, K, KD) against CPA(KD).Adversary;
-
-Valid by assumption
-===STEP 3===
 Reduction to apply:
-Reduction R1() compose CPAKEM(K) against CPA(KD).Adversary {
+Reduction R1() compose CPAKEM(K) against CPA(H).Adversary {
+  PubKeySpace PK() { 
+    return challenger.PK();
+  }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace y = challenger.Challenge();
-    KEMSharedSecretSpace k_sym = y[0];
-    KEMCiphertextSpace c_kem = y[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mL);
-    return [c_kem, c_sym];
+    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.Challenge();
+    KEMCiphertextSpace c_kem = y[0];
+    KEMSharedSecretSpace k_dem = y[1];
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mL);
+    return [c_kem, c_dem];
   }
 }
 
 Challenger:
-Game Random() {
+Game Real() {
   PubKeySpace pk;
   SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     challenger@pk = k[0];
     challenger@sk = k[1];
+  }
+  PubKeySpace PK() { 
     return challenger@pk;
   }
   KEMSharedSecretSpace * KEMCiphertextSpace Challenge() { 
-    KEMSharedSecretSpace * KEMCiphertextSpace rsp = K.Encaps(challenger@pk);
-    KEMSharedSecretSpace ss <- KEMSharedSecretSpace;
-    KEMCiphertextSpace ctxt = rsp[1];
-    return [ss, ctxt];
+    KEMCiphertextSpace * KEMSharedSecretSpace rsp = K.Encaps(challenger@pk);
+    return rsp;
   }
 }
 
-Reduction to apply:
-Reduction R2() compose KeyUniformity(E) against CPA(KD).Adversary {
+Current: Game0(K, E, H) against CPA(H).Adversary;
+Hop To: CPAKEM(K).Real compose R1(E, K, H) against CPA(H).Adversary;
+
+SIMPLIFYING CURRENT GAME
+Game Game0() {
   PubKeySpace pk;
   SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     pk = k[0];
     sk = k[1];
+  }
+  PubKeySpace PK() { 
     return pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace x = K.Encaps(pk);
-    KEMSharedSecretSpace k_sym = challenger.Challenge();
-    KEMCiphertextSpace c_kem = x[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mL);
-    return [c_kem, c_sym];
-  }
-}
-
-Challenger:
-Game Random() {
-  KEMSharedSecretSpace Challenge() { 
-    KEMSharedSecretSpace k <- KEMSharedSecretSpace;
-    return k;
-  }
-}
-
-Current: CPAKEM(K).Random compose R1(E, K, KD) against CPA(KD).Adversary;
-Hop To: KeyUniformity(E).Random compose R2(E, K, KD) against CPA(KD).Adversary;
-
-SIMPLIFYING CURRENT GAME
-Game Inlined() {
-  PubKeySpace challenger@pk;
-  SecretKeySpace challenger@sk;
-  PubKeySpace Initialize() { 
-    PubKeySpace * SecretKeySpace k = K.KeyGen();
-    challenger@pk = k[0];
-    challenger@sk = k[1];
-    return challenger@pk;
-  }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace challenger.Challenge@rsp = K.Encaps(challenger@pk);
-    KEMSharedSecretSpace challenger.Challenge@ss <- KEMSharedSecretSpace;
-    KEMCiphertextSpace challenger.Challenge@ctxt = challenger.Challenge@rsp[1];
-    KEMSharedSecretSpace * KEMCiphertextSpace y = [challenger.Challenge@ss, challenger.Challenge@ctxt];
-    KEMSharedSecretSpace k_sym = y[0];
-    KEMCiphertextSpace c_kem = y[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mL);
-    return [c_kem, c_sym];
+    KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
+    KEMCiphertextSpace c_kem = x[0];
+    KEMSharedSecretSpace k_dem = x[1];
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mL);
+    return [c_kem, c_dem];
   }
 }
 
 SIMPLIFYING NEXT GAME
 Game Inlined() {
-  PubKeySpace pk;
-  SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  PubKeySpace challenger@pk;
+  SecretKeySpace challenger@sk;
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
-    pk = k[0];
-    sk = k[1];
-    return pk;
+    challenger@pk = k[0];
+    challenger@sk = k[1];
+  }
+  PubKeySpace PK() { 
+    return challenger@pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace x = K.Encaps(pk);
-    KEMSharedSecretSpace challenger.Challenge@k <- KEMSharedSecretSpace;
-    KEMSharedSecretSpace k_sym = challenger.Challenge@k;
-    KEMCiphertextSpace c_kem = x[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mL);
-    return [c_kem, c_sym];
+    KEMCiphertextSpace * KEMSharedSecretSpace challenger.Challenge@rsp0 = K.Encaps(challenger@pk);
+    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.Challenge@rsp0;
+    KEMCiphertextSpace c_kem = y[0];
+    KEMSharedSecretSpace k_dem = y[1];
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mL);
+    return [c_kem, c_dem];
   }
 }
 
 CURRENT
-Game Inlined() {
+Game Game0() {
   PubKeySpace field1;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace v1 = K.KeyGen();
     field1 = v1[0];
+  }
+  PubKeySpace PK() { 
     return field1;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace v2 = K.Encaps(field1);
-    KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
-    KEMCiphertextSpace v4 = v2[1];
-    SymCiphertextSpace v5 = E.Enc(v3, mL);
-    return [v4, v5];
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
+    KEMCiphertextSpace v3 = v2[0];
+    KEMSharedSecretSpace v4 = v2[1];
+    SymCiphertextSpace v5 = E.Enc(v4, mL);
+    return [v3, v5];
   }
 }
 
 NEXT
 Game Inlined() {
   PubKeySpace field1;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace v1 = K.KeyGen();
     field1 = v1[0];
+  }
+  PubKeySpace PK() { 
     return field1;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace v2 = K.Encaps(field1);
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
+    KEMCiphertextSpace v3 = v2[0];
+    KEMSharedSecretSpace v4 = v2[1];
+    SymCiphertextSpace v5 = E.Enc(v4, mL);
+    return [v3, v5];
+  }
+}
+
+Inline Success!
+===STEP 3===
+Current: CPAKEM(K).Real compose R1(E, K, H) against CPA(H).Adversary;
+Hop To: CPAKEM(K).Random compose R1(E, K, H) against CPA(H).Adversary;
+
+Valid by assumption
+===STEP 4===
+Reduction to apply:
+Reduction R1() compose CPAKEM(K) against CPA(H).Adversary {
+  PubKeySpace PK() { 
+    return challenger.PK();
+  }
+  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.Challenge();
+    KEMCiphertextSpace c_kem = y[0];
+    KEMSharedSecretSpace k_dem = y[1];
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mL);
+    return [c_kem, c_dem];
+  }
+}
+
+Challenger:
+Game Random() {
+  PubKeySpace pk;
+  SecretKeySpace sk;
+  Void Initialize() { 
+    PubKeySpace * SecretKeySpace k = K.KeyGen();
+    challenger@pk = k[0];
+    challenger@sk = k[1];
+  }
+  PubKeySpace PK() { 
+    return challenger@pk;
+  }
+  KEMSharedSecretSpace * KEMCiphertextSpace Challenge() { 
+    KEMCiphertextSpace * KEMSharedSecretSpace rsp = K.Encaps(challenger@pk);
+    KEMCiphertextSpace ctxt = rsp[0];
+    KEMSharedSecretSpace ss <- KEMSharedSecretSpace;
+    return [ctxt, ss];
+  }
+}
+
+Current: CPAKEM(K).Random compose R1(E, K, H) against CPA(H).Adversary;
+Hop To: Game1(K, E, H) against CPA(H).Adversary;
+
+SIMPLIFYING CURRENT GAME
+Game Inlined() {
+  PubKeySpace challenger@pk;
+  SecretKeySpace challenger@sk;
+  Void Initialize() { 
+    PubKeySpace * SecretKeySpace k = K.KeyGen();
+    challenger@pk = k[0];
+    challenger@sk = k[1];
+  }
+  PubKeySpace PK() { 
+    return challenger@pk;
+  }
+  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace challenger.Challenge@rsp0 = K.Encaps(challenger@pk);
+    KEMCiphertextSpace challenger.Challenge@ctxt0 = challenger.Challenge@rsp0[0];
+    KEMSharedSecretSpace challenger.Challenge@ss0 <- KEMSharedSecretSpace;
+    KEMCiphertextSpace * KEMSharedSecretSpace y = [challenger.Challenge@ctxt0, challenger.Challenge@ss0];
+    KEMCiphertextSpace c_kem = y[0];
+    KEMSharedSecretSpace k_dem = y[1];
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mL);
+    return [c_kem, c_dem];
+  }
+}
+
+SIMPLIFYING NEXT GAME
+Game Game1() {
+  PubKeySpace pk;
+  SecretKeySpace sk;
+  Void Initialize() { 
+    PubKeySpace * SecretKeySpace k = K.KeyGen();
+    pk = k[0];
+    sk = k[1];
+  }
+  PubKeySpace PK() { 
+    return pk;
+  }
+  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
+    KEMCiphertextSpace c_kem = x[0];
+    KEMSharedSecretSpace k_dem <- KEMSharedSecretSpace;
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mL);
+    return [c_kem, c_dem];
+  }
+}
+
+CURRENT
+Game Inlined() {
+  PubKeySpace field1;
+  Void Initialize() { 
+    PubKeySpace * SecretKeySpace v1 = K.KeyGen();
+    field1 = v1[0];
+  }
+  PubKeySpace PK() { 
+    return field1;
+  }
+  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
-    KEMCiphertextSpace v4 = v2[1];
+    KEMCiphertextSpace v4 = v2[0];
+    SymCiphertextSpace v5 = E.Enc(v3, mL);
+    return [v4, v5];
+  }
+}
+
+NEXT
+Game Game1() {
+  PubKeySpace field1;
+  Void Initialize() { 
+    PubKeySpace * SecretKeySpace v1 = K.KeyGen();
+    field1 = v1[0];
+  }
+  PubKeySpace PK() { 
+    return field1;
+  }
+  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
+    KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
+    KEMCiphertextSpace v4 = v2[0];
     SymCiphertextSpace v5 = E.Enc(v3, mL);
     return [v4, v5];
   }
 }
 
 Inline Success!
-===STEP 4===
-Current: KeyUniformity(E).Random compose R2(E, K, KD) against CPA(KD).Adversary;
-Hop To: KeyUniformity(E).Real compose R2(E, K, KD) against CPA(KD).Adversary;
-
-Valid by assumption
 ===STEP 5===
 Reduction to apply:
-Reduction R2() compose KeyUniformity(E) against CPA(KD).Adversary {
+Reduction R2() compose OTS(E) against CPA(H).Adversary {
   PubKeySpace pk;
   SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     pk = k[0];
     sk = k[1];
+  }
+  PubKeySpace PK() { 
     return pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace x = K.Encaps(pk);
-    KEMSharedSecretSpace k_sym = challenger.Challenge();
-    KEMCiphertextSpace c_kem = x[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mL);
-    return [c_kem, c_sym];
-  }
-}
-
-Challenger:
-Game Real() {
-  KEMSharedSecretSpace Challenge() { 
-    KEMSharedSecretSpace k = E.KeyGen();
-    return k;
-  }
-}
-
-Reduction to apply:
-Reduction R3() compose OneTimeSecrecy(E) against CPA(KD).Adversary {
-  PubKeySpace pk;
-  SecretKeySpace sk;
-  PubKeySpace Initialize() { 
-    PubKeySpace * SecretKeySpace k = K.KeyGen();
-    pk = k[0];
-    sk = k[1];
-    return pk;
-  }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace x = K.Encaps(pk);
-    KEMCiphertextSpace c_kem = x[1];
+    KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
+    KEMCiphertextSpace c_kem = x[0];
     SymCiphertextSpace c_sym = challenger.Eavesdrop(mL, mR);
     return [c_kem, c_sym];
   }
@@ -303,32 +352,33 @@ Reduction R3() compose OneTimeSecrecy(E) against CPA(KD).Adversary {
 Challenger:
 Game Left() {
   SymCiphertextSpace Eavesdrop(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace k = E.KeyGen();
+    KEMSharedSecretSpace k <- KEMSharedSecretSpace;
     SymCiphertextSpace c = E.Enc(k, mL);
     return c;
   }
 }
 
-Current: KeyUniformity(E).Real compose R2(E, K, KD) against CPA(KD).Adversary;
-Hop To: OneTimeSecrecy(E).Left compose R3(E, K, KD) against CPA(KD).Adversary;
+Current: Game1(K, E, H) against CPA(H).Adversary;
+Hop To: OTS(E).Left compose R2(E, K, H) against CPA(H).Adversary;
 
 SIMPLIFYING CURRENT GAME
-Game Inlined() {
+Game Game1() {
   PubKeySpace pk;
   SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     pk = k[0];
     sk = k[1];
+  }
+  PubKeySpace PK() { 
     return pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace x = K.Encaps(pk);
-    KEMSharedSecretSpace challenger.Challenge@k = E.KeyGen();
-    KEMSharedSecretSpace k_sym = challenger.Challenge@k;
-    KEMCiphertextSpace c_kem = x[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mL);
-    return [c_kem, c_sym];
+    KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
+    KEMCiphertextSpace c_kem = x[0];
+    KEMSharedSecretSpace k_dem <- KEMSharedSecretSpace;
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mL);
+    return [c_kem, c_dem];
   }
 }
 
@@ -336,34 +386,38 @@ SIMPLIFYING NEXT GAME
 Game Inlined() {
   PubKeySpace pk;
   SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     pk = k[0];
     sk = k[1];
+  }
+  PubKeySpace PK() { 
     return pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace x = K.Encaps(pk);
-    KEMCiphertextSpace c_kem = x[1];
-    KEMSharedSecretSpace challenger.Eavesdrop@k = E.KeyGen();
-    SymCiphertextSpace challenger.Eavesdrop@c = E.Enc(challenger.Eavesdrop@k, mL);
-    SymCiphertextSpace c_sym = challenger.Eavesdrop@c;
+    KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
+    KEMCiphertextSpace c_kem = x[0];
+    KEMSharedSecretSpace challenger.Eavesdrop@k2 <- KEMSharedSecretSpace;
+    SymCiphertextSpace challenger.Eavesdrop@c2 = E.Enc(challenger.Eavesdrop@k2, mL);
+    SymCiphertextSpace c_sym = challenger.Eavesdrop@c2;
     return [c_kem, c_sym];
   }
 }
 
 CURRENT
-Game Inlined() {
+Game Game1() {
   PubKeySpace field1;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace v1 = K.KeyGen();
     field1 = v1[0];
+  }
+  PubKeySpace PK() { 
     return field1;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace v2 = K.Encaps(field1);
-    KEMSharedSecretSpace v3 = E.KeyGen();
-    KEMCiphertextSpace v4 = v2[1];
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
+    KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
+    KEMCiphertextSpace v4 = v2[0];
     SymCiphertextSpace v5 = E.Enc(v3, mL);
     return [v4, v5];
   }
@@ -372,15 +426,17 @@ Game Inlined() {
 NEXT
 Game Inlined() {
   PubKeySpace field1;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace v1 = K.KeyGen();
     field1 = v1[0];
+  }
+  PubKeySpace PK() { 
     return field1;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace v2 = K.Encaps(field1);
-    KEMSharedSecretSpace v3 = E.KeyGen();
-    KEMCiphertextSpace v4 = v2[1];
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
+    KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
+    KEMCiphertextSpace v4 = v2[0];
     SymCiphertextSpace v5 = E.Enc(v3, mL);
     return [v4, v5];
   }
@@ -388,24 +444,26 @@ Game Inlined() {
 
 Inline Success!
 ===STEP 6===
-Current: OneTimeSecrecy(E).Left compose R3(E, K, KD) against CPA(KD).Adversary;
-Hop To: OneTimeSecrecy(E).Right compose R3(E, K, KD) against CPA(KD).Adversary;
+Current: OTS(E).Left compose R2(E, K, H) against CPA(H).Adversary;
+Hop To: OTS(E).Right compose R2(E, K, H) against CPA(H).Adversary;
 
 Valid by assumption
 ===STEP 7===
 Reduction to apply:
-Reduction R3() compose OneTimeSecrecy(E) against CPA(KD).Adversary {
+Reduction R2() compose OTS(E) against CPA(H).Adversary {
   PubKeySpace pk;
   SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     pk = k[0];
     sk = k[1];
+  }
+  PubKeySpace PK() { 
     return pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace x = K.Encaps(pk);
-    KEMCiphertextSpace c_kem = x[1];
+    KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
+    KEMCiphertextSpace c_kem = x[0];
     SymCiphertextSpace c_sym = challenger.Eavesdrop(mL, mR);
     return [c_kem, c_sym];
   }
@@ -414,111 +472,91 @@ Reduction R3() compose OneTimeSecrecy(E) against CPA(KD).Adversary {
 Challenger:
 Game Right() {
   SymCiphertextSpace Eavesdrop(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace k = E.KeyGen();
+    KEMSharedSecretSpace k <- KEMSharedSecretSpace;
     SymCiphertextSpace c = E.Enc(k, mR);
     return c;
   }
 }
 
-Reduction to apply:
-Reduction R4() compose KeyUniformity(E) against CPA(KD).Adversary {
-  PubKeySpace pk;
-  SecretKeySpace sk;
-  PubKeySpace Initialize() { 
-    PubKeySpace * SecretKeySpace k = K.KeyGen();
-    pk = k[0];
-    sk = k[1];
-    return pk;
-  }
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace x = K.Encaps(pk);
-    KEMSharedSecretSpace k_sym = challenger.Challenge();
-    KEMCiphertextSpace c_kem = x[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mR);
-    return [c_kem, c_sym];
-  }
-}
-
-Challenger:
-Game Real() {
-  KEMSharedSecretSpace Challenge() { 
-    KEMSharedSecretSpace k = E.KeyGen();
-    return k;
-  }
-}
-
-Current: OneTimeSecrecy(E).Right compose R3(E, K, KD) against CPA(KD).Adversary;
-Hop To: KeyUniformity(E).Real compose R4(E, K, KD) against CPA(KD).Adversary;
+Current: OTS(E).Right compose R2(E, K, H) against CPA(H).Adversary;
+Hop To: Game2(K, E, H) against CPA(H).Adversary;
 
 SIMPLIFYING CURRENT GAME
 Game Inlined() {
   PubKeySpace pk;
   SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     pk = k[0];
     sk = k[1];
+  }
+  PubKeySpace PK() { 
     return pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace x = K.Encaps(pk);
-    KEMCiphertextSpace c_kem = x[1];
-    KEMSharedSecretSpace challenger.Eavesdrop@k = E.KeyGen();
-    SymCiphertextSpace challenger.Eavesdrop@c = E.Enc(challenger.Eavesdrop@k, mR);
-    SymCiphertextSpace c_sym = challenger.Eavesdrop@c;
+    KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
+    KEMCiphertextSpace c_kem = x[0];
+    KEMSharedSecretSpace challenger.Eavesdrop@k2 <- KEMSharedSecretSpace;
+    SymCiphertextSpace challenger.Eavesdrop@c2 = E.Enc(challenger.Eavesdrop@k2, mR);
+    SymCiphertextSpace c_sym = challenger.Eavesdrop@c2;
     return [c_kem, c_sym];
   }
 }
 
 SIMPLIFYING NEXT GAME
-Game Inlined() {
+Game Game2() {
   PubKeySpace pk;
   SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     pk = k[0];
     sk = k[1];
+  }
+  PubKeySpace PK() { 
     return pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace x = K.Encaps(pk);
-    KEMSharedSecretSpace challenger.Challenge@k = E.KeyGen();
-    KEMSharedSecretSpace k_sym = challenger.Challenge@k;
-    KEMCiphertextSpace c_kem = x[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mR);
-    return [c_kem, c_sym];
+    KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
+    KEMCiphertextSpace c_kem = x[0];
+    KEMSharedSecretSpace k_dem <- KEMSharedSecretSpace;
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mR);
+    return [c_kem, c_dem];
   }
 }
 
 CURRENT
 Game Inlined() {
   PubKeySpace field1;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace v1 = K.KeyGen();
     field1 = v1[0];
+  }
+  PubKeySpace PK() { 
     return field1;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace v2 = K.Encaps(field1);
-    KEMSharedSecretSpace v3 = E.KeyGen();
-    KEMCiphertextSpace v4 = v2[1];
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
+    KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
+    KEMCiphertextSpace v4 = v2[0];
     SymCiphertextSpace v5 = E.Enc(v3, mR);
     return [v4, v5];
   }
 }
 
 NEXT
-Game Inlined() {
+Game Game2() {
   PubKeySpace field1;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace v1 = K.KeyGen();
     field1 = v1[0];
+  }
+  PubKeySpace PK() { 
     return field1;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace v2 = K.Encaps(field1);
-    KEMSharedSecretSpace v3 = E.KeyGen();
-    KEMCiphertextSpace v4 = v2[1];
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
+    KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
+    KEMCiphertextSpace v4 = v2[0];
     SymCiphertextSpace v5 = E.Enc(v3, mR);
     return [v4, v5];
   }
@@ -526,46 +564,17 @@ Game Inlined() {
 
 Inline Success!
 ===STEP 8===
-Current: KeyUniformity(E).Real compose R4(E, K, KD) against CPA(KD).Adversary;
-Hop To: KeyUniformity(E).Random compose R4(E, K, KD) against CPA(KD).Adversary;
-
-Valid by assumption
-===STEP 9===
 Reduction to apply:
-Reduction R4() compose KeyUniformity(E) against CPA(KD).Adversary {
-  PubKeySpace pk;
-  SecretKeySpace sk;
-  PubKeySpace Initialize() { 
-    PubKeySpace * SecretKeySpace k = K.KeyGen();
-    pk = k[0];
-    sk = k[1];
-    return pk;
+Reduction R3() compose CPAKEM(K) against CPA(H).Adversary {
+  PubKeySpace PK() { 
+    return challenger.PK();
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace x = K.Encaps(pk);
-    KEMSharedSecretSpace k_sym = challenger.Challenge();
-    KEMCiphertextSpace c_kem = x[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mR);
-    return [c_kem, c_sym];
-  }
-}
-
-Challenger:
-Game Random() {
-  KEMSharedSecretSpace Challenge() { 
-    KEMSharedSecretSpace k <- KEMSharedSecretSpace;
-    return k;
-  }
-}
-
-Reduction to apply:
-Reduction R5() compose CPAKEM(K) against CPA(KD).Adversary {
-  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace y = challenger.Challenge();
-    KEMSharedSecretSpace k_sym = y[0];
-    KEMCiphertextSpace c_kem = y[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mR);
-    return [c_kem, c_sym];
+    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.Challenge();
+    KEMCiphertextSpace c_kem = y[0];
+    KEMSharedSecretSpace k_dem = y[1];
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mR);
+    return [c_kem, c_dem];
   }
 }
 
@@ -573,40 +582,43 @@ Challenger:
 Game Random() {
   PubKeySpace pk;
   SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     challenger@pk = k[0];
     challenger@sk = k[1];
+  }
+  PubKeySpace PK() { 
     return challenger@pk;
   }
   KEMSharedSecretSpace * KEMCiphertextSpace Challenge() { 
-    KEMSharedSecretSpace * KEMCiphertextSpace rsp = K.Encaps(challenger@pk);
+    KEMCiphertextSpace * KEMSharedSecretSpace rsp = K.Encaps(challenger@pk);
+    KEMCiphertextSpace ctxt = rsp[0];
     KEMSharedSecretSpace ss <- KEMSharedSecretSpace;
-    KEMCiphertextSpace ctxt = rsp[1];
-    return [ss, ctxt];
+    return [ctxt, ss];
   }
 }
 
-Current: KeyUniformity(E).Random compose R4(E, K, KD) against CPA(KD).Adversary;
-Hop To: CPAKEM(K).Random compose R5(E, K, KD) against CPA(KD).Adversary;
+Current: Game2(K, E, H) against CPA(H).Adversary;
+Hop To: CPAKEM(K).Random compose R3(E, K, H) against CPA(H).Adversary;
 
 SIMPLIFYING CURRENT GAME
-Game Inlined() {
+Game Game2() {
   PubKeySpace pk;
   SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     pk = k[0];
     sk = k[1];
+  }
+  PubKeySpace PK() { 
     return pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace x = K.Encaps(pk);
-    KEMSharedSecretSpace challenger.Challenge@k <- KEMSharedSecretSpace;
-    KEMSharedSecretSpace k_sym = challenger.Challenge@k;
-    KEMCiphertextSpace c_kem = x[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mR);
-    return [c_kem, c_sym];
+    KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
+    KEMCiphertextSpace c_kem = x[0];
+    KEMSharedSecretSpace k_dem <- KEMSharedSecretSpace;
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mR);
+    return [c_kem, c_dem];
   }
 }
 
@@ -614,36 +626,40 @@ SIMPLIFYING NEXT GAME
 Game Inlined() {
   PubKeySpace challenger@pk;
   SecretKeySpace challenger@sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     challenger@pk = k[0];
     challenger@sk = k[1];
+  }
+  PubKeySpace PK() { 
     return challenger@pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace challenger.Challenge@rsp = K.Encaps(challenger@pk);
-    KEMSharedSecretSpace challenger.Challenge@ss <- KEMSharedSecretSpace;
-    KEMCiphertextSpace challenger.Challenge@ctxt = challenger.Challenge@rsp[1];
-    KEMSharedSecretSpace * KEMCiphertextSpace y = [challenger.Challenge@ss, challenger.Challenge@ctxt];
-    KEMSharedSecretSpace k_sym = y[0];
-    KEMCiphertextSpace c_kem = y[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mR);
-    return [c_kem, c_sym];
+    KEMCiphertextSpace * KEMSharedSecretSpace challenger.Challenge@rsp0 = K.Encaps(challenger@pk);
+    KEMCiphertextSpace challenger.Challenge@ctxt0 = challenger.Challenge@rsp0[0];
+    KEMSharedSecretSpace challenger.Challenge@ss0 <- KEMSharedSecretSpace;
+    KEMCiphertextSpace * KEMSharedSecretSpace y = [challenger.Challenge@ctxt0, challenger.Challenge@ss0];
+    KEMCiphertextSpace c_kem = y[0];
+    KEMSharedSecretSpace k_dem = y[1];
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mR);
+    return [c_kem, c_dem];
   }
 }
 
 CURRENT
-Game Inlined() {
+Game Game2() {
   PubKeySpace field1;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace v1 = K.KeyGen();
     field1 = v1[0];
+  }
+  PubKeySpace PK() { 
     return field1;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace v2 = K.Encaps(field1);
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
-    KEMCiphertextSpace v4 = v2[1];
+    KEMCiphertextSpace v4 = v2[0];
     SymCiphertextSpace v5 = E.Enc(v3, mR);
     return [v4, v5];
   }
@@ -652,35 +668,40 @@ Game Inlined() {
 NEXT
 Game Inlined() {
   PubKeySpace field1;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace v1 = K.KeyGen();
     field1 = v1[0];
+  }
+  PubKeySpace PK() { 
     return field1;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace v2 = K.Encaps(field1);
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
     KEMSharedSecretSpace v3 <- KEMSharedSecretSpace;
-    KEMCiphertextSpace v4 = v2[1];
+    KEMCiphertextSpace v4 = v2[0];
     SymCiphertextSpace v5 = E.Enc(v3, mR);
     return [v4, v5];
   }
 }
 
 Inline Success!
-===STEP 10===
-Current: CPAKEM(K).Random compose R5(E, K, KD) against CPA(KD).Adversary;
-Hop To: CPAKEM(K).Real compose R5(E, K, KD) against CPA(KD).Adversary;
+===STEP 9===
+Current: CPAKEM(K).Random compose R3(E, K, H) against CPA(H).Adversary;
+Hop To: CPAKEM(K).Real compose R3(E, K, H) against CPA(H).Adversary;
 
 Valid by assumption
-===STEP 11===
+===STEP 10===
 Reduction to apply:
-Reduction R5() compose CPAKEM(K) against CPA(KD).Adversary {
+Reduction R3() compose CPAKEM(K) against CPA(H).Adversary {
+  PubKeySpace PK() { 
+    return challenger.PK();
+  }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace y = challenger.Challenge();
-    KEMSharedSecretSpace k_sym = y[0];
-    KEMCiphertextSpace c_kem = y[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mR);
-    return [c_kem, c_sym];
+    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.Challenge();
+    KEMCiphertextSpace c_kem = y[0];
+    KEMSharedSecretSpace k_dem = y[1];
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mR);
+    return [c_kem, c_dem];
   }
 }
 
@@ -688,42 +709,127 @@ Challenger:
 Game Real() {
   PubKeySpace pk;
   SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     challenger@pk = k[0];
     challenger@sk = k[1];
+  }
+  PubKeySpace PK() { 
     return challenger@pk;
   }
   KEMSharedSecretSpace * KEMCiphertextSpace Challenge() { 
-    KEMSharedSecretSpace * KEMCiphertextSpace rsp = K.Encaps(challenger@pk);
-    KEMSharedSecretSpace ss = rsp[0];
-    KEMCiphertextSpace ctxt = rsp[1];
-    return [ss, ctxt];
+    KEMCiphertextSpace * KEMSharedSecretSpace rsp = K.Encaps(challenger@pk);
+    return rsp;
   }
 }
 
-Current: CPAKEM(K).Real compose R5(E, K, KD) against CPA(KD).Adversary;
-Hop To: CPA(KD).Right against CPA(KD).Adversary;
+Current: CPAKEM(K).Real compose R3(E, K, H) against CPA(H).Adversary;
+Hop To: Game3(K, E, H) against CPA(H).Adversary;
 
 SIMPLIFYING CURRENT GAME
 Game Inlined() {
   PubKeySpace challenger@pk;
   SecretKeySpace challenger@sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     challenger@pk = k[0];
     challenger@sk = k[1];
+  }
+  PubKeySpace PK() { 
     return challenger@pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace challenger.Challenge@rsp = K.Encaps(challenger@pk);
-    KEMSharedSecretSpace challenger.Challenge@ss = challenger.Challenge@rsp[0];
-    KEMCiphertextSpace challenger.Challenge@ctxt = challenger.Challenge@rsp[1];
-    KEMSharedSecretSpace * KEMCiphertextSpace y = [challenger.Challenge@ss, challenger.Challenge@ctxt];
-    KEMSharedSecretSpace k_sym = y[0];
-    KEMCiphertextSpace c_kem = y[1];
-    SymCiphertextSpace c_sym = E.Enc(k_sym, mR);
-    return [c_kem, c_sym];
+    KEMCiphertextSpace * KEMSharedSecretSpace challenger.Challenge@rsp0 = K.Encaps(challenger@pk);
+    KEMCiphertextSpace * KEMSharedSecretSpace y = challenger.Challenge@rsp0;
+    KEMCiphertextSpace c_kem = y[0];
+    KEMSharedSecretSpace k_dem = y[1];
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mR);
+    return [c_kem, c_dem];
+  }
+}
+
+SIMPLIFYING NEXT GAME
+Game Game3() {
+  PubKeySpace pk;
+  SecretKeySpace sk;
+  Void Initialize() { 
+    PubKeySpace * SecretKeySpace k = K.KeyGen();
+    pk = k[0];
+    sk = k[1];
+  }
+  PubKeySpace PK() { 
+    return pk;
+  }
+  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
+    KEMCiphertextSpace c_kem = x[0];
+    KEMSharedSecretSpace k_dem = x[1];
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mR);
+    return [c_kem, c_dem];
+  }
+}
+
+CURRENT
+Game Inlined() {
+  PubKeySpace field1;
+  Void Initialize() { 
+    PubKeySpace * SecretKeySpace v1 = K.KeyGen();
+    field1 = v1[0];
+  }
+  PubKeySpace PK() { 
+    return field1;
+  }
+  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
+    KEMCiphertextSpace v3 = v2[0];
+    KEMSharedSecretSpace v4 = v2[1];
+    SymCiphertextSpace v5 = E.Enc(v4, mR);
+    return [v3, v5];
+  }
+}
+
+NEXT
+Game Game3() {
+  PubKeySpace field1;
+  Void Initialize() { 
+    PubKeySpace * SecretKeySpace v1 = K.KeyGen();
+    field1 = v1[0];
+  }
+  PubKeySpace PK() { 
+    return field1;
+  }
+  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
+    KEMCiphertextSpace v3 = v2[0];
+    KEMSharedSecretSpace v4 = v2[1];
+    SymCiphertextSpace v5 = E.Enc(v4, mR);
+    return [v3, v5];
+  }
+}
+
+Inline Success!
+===STEP 11===
+Current: Game3(K, E, H) against CPA(H).Adversary;
+Hop To: CPA(H).Right against CPA(H).Adversary;
+
+SIMPLIFYING CURRENT GAME
+Game Game3() {
+  PubKeySpace pk;
+  SecretKeySpace sk;
+  Void Initialize() { 
+    PubKeySpace * SecretKeySpace k = K.KeyGen();
+    pk = k[0];
+    sk = k[1];
+  }
+  PubKeySpace PK() { 
+    return pk;
+  }
+  KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
+    KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
+    KEMCiphertextSpace c_kem = x[0];
+    KEMSharedSecretSpace k_dem = x[1];
+    SymCiphertextSpace c_dem = E.Enc(k_dem, mR);
+    return [c_kem, c_dem];
   }
 }
 
@@ -731,52 +837,58 @@ SIMPLIFYING NEXT GAME
 Game Right() {
   PubKeySpace pk;
   SecretKeySpace sk;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace k = K.KeyGen();
     pk = k[0];
     sk = k[1];
+  }
+  PubKeySpace PK() { 
     return pk;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace KD.Enc@x = K.Encaps(pk);
-    KEMSharedSecretSpace KD.Enc@k_sym = KD.Enc@x[0];
-    KEMCiphertextSpace KD.Enc@c_kem = KD.Enc@x[1];
-    SymCiphertextSpace KD.Enc@c_sym = E.Enc(KD.Enc@k_sym, mR);
-    return [KD.Enc@c_kem, KD.Enc@c_sym];
+    KEMCiphertextSpace * KEMSharedSecretSpace H.Enc@x0 = K.Encaps(pk);
+    KEMCiphertextSpace H.Enc@c_kem0 = H.Enc@x0[0];
+    KEMSharedSecretSpace H.Enc@k_dem0 = H.Enc@x0[1];
+    SymCiphertextSpace H.Enc@c_dem0 = E.Enc(H.Enc@k_dem0, mR);
+    return [H.Enc@c_kem0, H.Enc@c_dem0];
   }
 }
 
 CURRENT
-Game Inlined() {
+Game Game3() {
   PubKeySpace field1;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace v1 = K.KeyGen();
     field1 = v1[0];
+  }
+  PubKeySpace PK() { 
     return field1;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace v2 = K.Encaps(field1);
-    KEMSharedSecretSpace v3 = v2[0];
-    KEMCiphertextSpace v4 = v2[1];
-    SymCiphertextSpace v5 = E.Enc(v3, mR);
-    return [v4, v5];
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
+    KEMCiphertextSpace v3 = v2[0];
+    KEMSharedSecretSpace v4 = v2[1];
+    SymCiphertextSpace v5 = E.Enc(v4, mR);
+    return [v3, v5];
   }
 }
 
 NEXT
 Game Right() {
   PubKeySpace field1;
-  PubKeySpace Initialize() { 
+  Void Initialize() { 
     PubKeySpace * SecretKeySpace v1 = K.KeyGen();
     field1 = v1[0];
+  }
+  PubKeySpace PK() { 
     return field1;
   }
   KEMCiphertextSpace * SymCiphertextSpace Challenge(SymMessageSpace mL, SymMessageSpace mR) { 
-    KEMSharedSecretSpace * KEMCiphertextSpace v2 = K.Encaps(field1);
-    KEMSharedSecretSpace v3 = v2[0];
-    KEMCiphertextSpace v4 = v2[1];
-    SymCiphertextSpace v5 = E.Enc(v3, mR);
-    return [v4, v5];
+    KEMCiphertextSpace * KEMSharedSecretSpace v2 = K.Encaps(field1);
+    KEMCiphertextSpace v3 = v2[0];
+    KEMSharedSecretSpace v4 = v2[1];
+    SymCiphertextSpace v5 = E.Enc(v4, mR);
+    return [v3, v5];
   }
 }
 

@@ -1,8 +1,8 @@
-import 'examples/Primitives/SymEnc.primitive';
+import 'SymEnc.primitive';
 
 Game Left(SymEnc E) {
     E.Ciphertext Eavesdrop(E.Message mL, E.Message mR) {
-        E.Key k = E.KeyGen();
+        E.Key k <- E.Key;
         E.Ciphertext c = E.Enc(k, mL);
         return c;
     }
@@ -10,10 +10,10 @@ Game Left(SymEnc E) {
 
 Game Right(SymEnc E) {
     E.Ciphertext Eavesdrop(E.Message mL, E.Message mR) {
-        E.Key k = E.KeyGen();
+        E.Key k <- E.Key;
         E.Ciphertext c = E.Enc(k, mR);
         return c;
     }
 }
 
-export as OneTimeSecrecy;
+export as OTS;

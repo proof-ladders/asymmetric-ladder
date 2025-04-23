@@ -1,13 +1,16 @@
-import 'examples/Primitives/PubKeyEnc.primitive';
+import 'PKE.primitive';
 
-Game Left(PubKeyEnc E) {
+Game Left(PKE E) {
     E.PublicKey pk;
     E.SecretKey sk;
 
-    E.PublicKey Initialize() {
+    Void Initialize() {
         E.PublicKey * E.SecretKey k = E.KeyGen();
         pk = k[0];
         sk = k[1];
+    }
+
+    E.PublicKey PK() {
         return pk;
     }
 
@@ -16,14 +19,17 @@ Game Left(PubKeyEnc E) {
     }
 }
 
-Game Right(PubKeyEnc E) {
+Game Right(PKE E) {
     E.PublicKey pk;
     E.SecretKey sk;
 
-    E.PublicKey Initialize() {
+    Void Initialize() {
         E.PublicKey * E.SecretKey k = E.KeyGen();
         pk = k[0];
         sk = k[1];
+    }
+
+    E.PublicKey PK() {
         return pk;
     }
 
