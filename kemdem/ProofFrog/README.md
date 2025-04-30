@@ -16,17 +16,14 @@ The original Joy of Cryptography-style proof is available at [https://garbledcir
 2. Install ProofFrog:
 
 	```sh
-	git clone https://github.com/ProofFrog/ProofFrog.git
-	cd ProofFrog
-	pip3 install -r requirements.txt
-	cd ..
+	pip3 install proof_frog
 	```
 
 3. Run ProofFrog on the proof:
 
 	```sh
 	cd asymmetric-ladder/kemdem/ProofFrog/src
-	PYTHONPATH=../../../../ProofFrog python3 -m proof_frog prove Hyb-is-CPA.proof
+	proof_frog prove Hyb-is-CPA.proof
 	```
 
 	The last line of the output should say "Proof Succeeded!".  The full expected output can be found in the file `output.txt`.
