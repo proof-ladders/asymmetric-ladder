@@ -15,15 +15,18 @@ some game-based structuring.
 
 1. Clone this repository: `git clone https://github.com/proof-ladders/asymmetric-ladder.git`
 
-2. [Install EasyCrypt](https://github.com/easycrypt/easycrypt)
-  a. Install Z3 (>= 4.8)
-  b. Install python's `curses` module (using your preferred method).
+2. Set up EasyCrypt, either following its direct [set up
+   guide](https://easycrypt.gitlab.io/easycrypt-web/docs/guides/setting-up-easycrypt)
+   or by taking on board the less opinionated discussions available on
+   [github](https://github.com/easycrypt/easycrypt).
+  a. When choosing SMT solvers to install, be aware that this proof requires Z3
+     (>= 4.8). (You can install other solvers, but they will not be used, and
+     not having Z3 (>= 4.8) will lead to erros when checking.)
+  b. Don't forget to also configure EasyCrypt.
 
   ```sh
   easycrypt why3config
   ```
-
-  c. Configure EasyCrypt
 
 3. Run EasyCrypt on the proof:
 
