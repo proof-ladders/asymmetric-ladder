@@ -2,7 +2,7 @@
 // two games:
 //  - Real:   The adversary receives a real KEM ciphertext and the
 //            real shared secret encapsulated therein
-//  - Random: The adversary receives a real KEM ciphertext and an 
+//  - Ideal:  The adversary receives a real KEM ciphertext and an 
 //            independent randomly sampled shared secret
 
 import 'KEM.primitive';
@@ -27,7 +27,7 @@ Game Real(KEM K) {
     }
 }
 
-Game Random(KEM K) {
+Game Ideal(KEM K) {
     K.PublicKey pk;
     K.SecretKey sk;
 

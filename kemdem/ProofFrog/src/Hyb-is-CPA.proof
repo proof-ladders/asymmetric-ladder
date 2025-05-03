@@ -116,8 +116,8 @@ Reduction R2(SymEnc E, KEM K, Hyb H) compose OTS(E) against CPA(H).Adversary {
     H.Ciphertext ENC(H.Message mL, H.Message mR) {
         K.Ciphertext * K.SharedSecret x = K.Encaps(pk);
         K.Ciphertext c_kem = x[0];
-        E.Ciphertext c_sym = challenger.ENC(mL, mR);
-        return [c_kem, c_sym];
+        E.Ciphertext c_dem = challenger.ENC(mL, mR);
+        return [c_kem, c_dem];
     }
 }
 
@@ -210,13 +210,13 @@ games:
     Game0(K, E, H) against CPA(H).Adversary;
     CPAKEM(K).Real compose R1(E, K, H) against CPA(H).Adversary;
     // Game 1
-    CPAKEM(K).Random compose R1(E, K, H) against CPA(H).Adversary;
+    CPAKEM(K).Ideal compose R1(E, K, H) against CPA(H).Adversary;
     Game1(K, E, H) against CPA(H).Adversary;
     OTS(E).Left compose R2(E, K, H) against CPA(H).Adversary;
     // Game 2
     OTS(E).Right compose R2(E, K, H) against CPA(H).Adversary;
     Game2(K, E, H) against CPA(H).Adversary;
-    CPAKEM(K).Random compose R3(E, K, H) against CPA(H).Adversary;
+    CPAKEM(K).Ideal compose R3(E, K, H) against CPA(H).Adversary;
     // Game 3
     CPAKEM(K).Real compose R3(E, K, H) against CPA(H).Adversary;
     Game3(K, E, H) against CPA(H).Adversary;
