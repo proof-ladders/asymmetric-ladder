@@ -5,11 +5,17 @@
 
 ## Worked tutorial
 
-TODO
-
 The proof as currently formalized mainly follows [Boneh and
 Shoup](https://toc.cryptobook.us/) (see Exercise 11.9 of version 0.6), with
 some game-based structuring.
+
+A worked tutorial will eventually appear here, and may be
+[there](https://easycrypt.gitlab.io/easycrypt-web/docs/tutorials/) right now.
+
+There also exists a [Joy-of-Cryptography-Style
+formalization](https://github.com/Cameron-Low/Joy-Of-EasyCrypt/blob/main/Examples/KEM_DEM.ec),
+which is not commented or discussed, but may be integrated here to better
+relate tools.
 
 ## Instructions to run
 
