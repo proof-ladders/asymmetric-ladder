@@ -203,7 +203,7 @@ Game Inlined() {
 Inline Success!
 ===STEP 3===
 Current: CPAKEM(K).Real compose R1(E, K, H) against CPA(H).Adversary;
-Hop To: CPAKEM(K).Random compose R1(E, K, H) against CPA(H).Adversary;
+Hop To: CPAKEM(K).Ideal compose R1(E, K, H) against CPA(H).Adversary;
 
 Valid by assumption
 ===STEP 4===
@@ -222,7 +222,7 @@ Reduction R1() compose CPAKEM(K) against CPA(H).Adversary {
 }
 
 Challenger:
-Game Random() {
+Game Ideal() {
   PubKeySpace pk;
   SecretKeySpace sk;
   Void Initialize() { 
@@ -241,7 +241,7 @@ Game Random() {
   }
 }
 
-Current: CPAKEM(K).Random compose R1(E, K, H) against CPA(H).Adversary;
+Current: CPAKEM(K).Ideal compose R1(E, K, H) against CPA(H).Adversary;
 Hop To: Game1(K, E, H) against CPA(H).Adversary;
 
 SIMPLIFYING CURRENT GAME
@@ -344,8 +344,8 @@ Reduction R2() compose OTS(E) against CPA(H).Adversary {
   KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
-    SymCiphertextSpace c_sym = challenger.ENC(mL, mR);
-    return [c_kem, c_sym];
+    SymCiphertextSpace c_dem = challenger.ENC(mL, mR);
+    return [c_kem, c_dem];
   }
 }
 
@@ -399,8 +399,8 @@ Game Inlined() {
     KEMCiphertextSpace c_kem = x[0];
     KEMSharedSecretSpace challenger.ENC@k2 <- KEMSharedSecretSpace;
     SymCiphertextSpace challenger.ENC@c2 = E.Enc(challenger.ENC@k2, mL);
-    SymCiphertextSpace c_sym = challenger.ENC@c2;
-    return [c_kem, c_sym];
+    SymCiphertextSpace c_dem = challenger.ENC@c2;
+    return [c_kem, c_dem];
   }
 }
 
@@ -464,8 +464,8 @@ Reduction R2() compose OTS(E) against CPA(H).Adversary {
   KEMCiphertextSpace * SymCiphertextSpace ENC(SymMessageSpace mL, SymMessageSpace mR) { 
     KEMCiphertextSpace * KEMSharedSecretSpace x = K.Encaps(pk);
     KEMCiphertextSpace c_kem = x[0];
-    SymCiphertextSpace c_sym = challenger.ENC(mL, mR);
-    return [c_kem, c_sym];
+    SymCiphertextSpace c_dem = challenger.ENC(mL, mR);
+    return [c_kem, c_dem];
   }
 }
 
@@ -498,8 +498,8 @@ Game Inlined() {
     KEMCiphertextSpace c_kem = x[0];
     KEMSharedSecretSpace challenger.ENC@k2 <- KEMSharedSecretSpace;
     SymCiphertextSpace challenger.ENC@c2 = E.Enc(challenger.ENC@k2, mR);
-    SymCiphertextSpace c_sym = challenger.ENC@c2;
-    return [c_kem, c_sym];
+    SymCiphertextSpace c_dem = challenger.ENC@c2;
+    return [c_kem, c_dem];
   }
 }
 
@@ -579,7 +579,7 @@ Reduction R3() compose CPAKEM(K) against CPA(H).Adversary {
 }
 
 Challenger:
-Game Random() {
+Game Ideal() {
   PubKeySpace pk;
   SecretKeySpace sk;
   Void Initialize() { 
@@ -599,7 +599,7 @@ Game Random() {
 }
 
 Current: Game2(K, E, H) against CPA(H).Adversary;
-Hop To: CPAKEM(K).Random compose R3(E, K, H) against CPA(H).Adversary;
+Hop To: CPAKEM(K).Ideal compose R3(E, K, H) against CPA(H).Adversary;
 
 SIMPLIFYING CURRENT GAME
 Game Game2() {
@@ -686,7 +686,7 @@ Game Inlined() {
 
 Inline Success!
 ===STEP 9===
-Current: CPAKEM(K).Random compose R3(E, K, H) against CPA(H).Adversary;
+Current: CPAKEM(K).Ideal compose R3(E, K, H) against CPA(H).Adversary;
 Hop To: CPAKEM(K).Real compose R3(E, K, H) against CPA(H).Adversary;
 
 Valid by assumption
