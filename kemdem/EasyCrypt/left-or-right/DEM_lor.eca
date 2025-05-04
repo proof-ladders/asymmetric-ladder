@@ -21,18 +21,18 @@ module type DEM_1CPA_Adv = {
 
 (** And we define the advantage of a one-time CPA adversary A against
     a DEM in initial memory &m as
-      `|   Pr[DEM_PAS_Exp(E, A).run(false) @ &m: res]
-         - Pr[DEM_PAS_Exp(E, A).run(true) @ &m: res]  |
-    where DEM_PAS_Exp is the experiment:
+      `|   Pr[DEM_1CPA_Exp(E, A).run(false) @ &m: res]
+         - Pr[DEM_1CPA_Exp(E, A).run(true) @ &m: res]  |
+    where DEM_1CPA_Exp is the experiment:
 **)
 module DEM_1CPA_Exp (E : DEM) (A : DEM_1CPA_Adv) = {
   proc run(b : bool) = {
-    var k, m0, m1, c, r;
+    var k, m0, m1, c, b';
 
     k <$ dkey;
     (m0, m1) <@ A.choose();
     c <@ E.enc(k, if b then m1 else m0);
-    r <@ A.distinguish(c);
-    return r;
+    b' <@ A.distinguish(c);
+    return b';
   }
 }.

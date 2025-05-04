@@ -27,13 +27,13 @@ module type PKE_CPA_Adv = {
 **)
 module PKE_CPA_Exp (E : PKE) (A : PKE_CPA_Adv) = {
   proc run(b : bool) = {
-    var pk, sk, c, r, m0, m1;
+    var pk, sk, c, b', m0, m1;
 
     (pk, sk) <@ E.keygen();
     (m0, m1) <@ A.choose(pk);
     c <@ E.enc(pk, if b then m1 else m0);
-    r <@ A.distinguish(c);
-    return r;
+    b' <@ A.distinguish(c);
+    return b';
   }
 }.
 

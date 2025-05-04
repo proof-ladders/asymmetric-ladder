@@ -62,7 +62,7 @@ module KEMDEM (E_kem : KEM) (E_s : DEM): PKE = {
   proc enc(pk : pkey, m : pt): kct * dct = {
     var k, kc, c;
 
-    (k, kc) <@ E_kem.enc(pk);
+    (k, kc) <@ E_kem.encaps(pk);
     c <@ E_s.enc(k, m);
     return (kc, c);
   }
@@ -72,7 +72,7 @@ module KEMDEM (E_kem : KEM) (E_s : DEM): PKE = {
 
     (kc, dc) <- c;
     r <- None;
-    k <@ E_kem.dec(sk, kc);
+    k <@ E_kem.decaps(sk, kc);
     if (k <> None) {
       m <@ E_s.dec(oget k, dc);
       r <- Some m;
@@ -86,24 +86,24 @@ module KEMDEM (E_kem : KEM) (E_s : DEM): PKE = {
        B_kem_1(E_s) and B_s(E_kem) such that ...
 ***)
 module B_kem_0 (E_s : DEM) (A : PKE_CPA_Adv) = {
-  proc distinguish(pk : pkey, k : key, c: kct) = {
-    var m0, m1, c', r;
+  proc distinguish(pk : pkey, k : key, kc: kct) = {
+    var m0, m1, dc, b';
 
     (m0, m1) <@ A.choose(pk);
-    c' <@ E_s.enc(k, m0);
-    r <@ A.distinguish(c, c');
-    return r;
+    dc <@ E_s.enc(k, m0);
+    b' <@ A.distinguish((kc, dc));
+    return b';
   }
 }.
 
 module B_kem_1 (E_s : DEM) (A : PKE_CPA_Adv) = {
-  proc distinguish(pk : pkey, k : key, c: kct) = {
-    var m0, m1, c', r;
+  proc distinguish(pk : pkey, k : key, kc: kct) = {
+    var m0, m1, dc, b';
 
     (m0, m1) <@ A.choose(pk);
-    c' <@ E_s.enc(k, m1);
-    r <@ A.distinguish(c, c');
-    return r;
+    dc <@ E_s.enc(k, m1);
+    b' <@ A.distinguish((kc, dc));
+    return b';
   }
 }.
 
@@ -118,12 +118,12 @@ module B_s (E_kem : KEM) (A : PKE_CPA_Adv) = {
     return (m0, m1);
   }
 
-  proc distinguish(c : dct) = {
-    var k0, kc, r;
+  proc distinguish(dc : dct) = {
+    var k0, kc, b';
 
-    (k0, kc) <@ E_kem.enc(pk);
-    r <@ A.distinguish(kc, c);
-    return r;
+    (k0, kc) <@ E_kem.encaps(pk);
+    b' <@ A.distinguish((kc, dc));
+    return b';
   }
 }.
 
@@ -138,7 +138,7 @@ declare module A     <: PKE_CPA_Adv { -B_s, -E_kem, -E_s }.
         Adv^{CPA}_{KEMDEM(E_kem, E_s)}(A)
      <=   Adv^{CPA}_{E_kem}(B_kem_0(E_s, A))
         + Adv^{CPA}_{E_kem}(B_kem_1(E_s, A))
-        + Adv^{PAS}_{E_s}(B_s(E_kem, A))
+        + Adv^{1CPA}_{E_s}(B_s(E_kem, A))
 *)
 
 (** The rest of this section is analyzing the claim above, culminating
@@ -155,26 +155,26 @@ declare module A     <: PKE_CPA_Adv { -B_s, -E_kem, -E_s }.
    experiment on KEMDEM with the same parameter b. (Hop1 and Hop3.)
 
    The distance between Game1 with b = 0 and Game1 with b = 1 is
-   clearly exactly Adv^{PAS}_{E_s}. (Hop2.)
+   clearly exactly Adv^{1CPA}_{E_s}. (Hop2.)
 
    Defining Game1 is unnecessary for the EasyCrypt proof itself, but
    helps present it in game-based style.
 *)
 local module Game1 = {
   proc run(b : bool) = {
-    var pk, sk, m0, m1, k0, k1, kc, c, r;
+    var pk, sk, m0, m1, k0, k1, kc, dc, b';
 
     (pk, sk) <@ E_kem.keygen();
     (m0, m1) <@ A.choose(pk);
-    (k0, kc) <@ E_kem.enc(pk);
+    (k0, kc) <@ E_kem.encaps(pk);
     k1 <$ dkey;
-    c <@ E_s.enc(k1, if b then m1 else m0);
-    r <@ A.distinguish(kc, c);
-    return r;
+    dc <@ E_s.enc(k1, if b then m1 else m0);
+    b' <@ A.distinguish((kc, dc));
+    return b';
   }
 }.
 
-local lemma pke_0_kem_0 &m:
+local lemma EqPr_PKECPA0_KEMCPA0 &m:
     Pr[PKE_CPA_Exp(KEMDEM(E_kem, E_s), A).run(false) @ &m: res]
   = Pr[KEM_CPA_Exp(E_kem, B_kem_0(E_s, A)).run(false) @ &m: res].
 proof.
@@ -184,18 +184,19 @@ proof.
 byequiv=> //; proc.
 (* We inline the reduction to make the PKE adversary appear on the
    right *)
-inline {2} ^r<@.
+inline {2} 4.
 wp; call (: true). (* if the adversary runs with similar views of the
                       system (state of A, inputs), then they must end
                       with similar views of the system (output) *)
 (* We inline the KEM/DEM's encryption to make encapsulation and DEM
    encryption appear *)
-inline {1} ^c<@.
+inline {1} 3.
 wp; call (: true). (* same on DEM encryption-it's abstract! treated
                       the same as an adversary in our logic *)
 (* We need to align the KEM encapsulation calls and adversary runs;
    fortunately, we know they are independent. *)
-swap {1} ^pk0<- -1. swap {1} -1 -2.
+swap {1} 3 -1.
+swap {1} -1 -2.
 (* We then have a sequence of equivalent calls *)
 wp; call (: true).
 (* interrupted by a one-sided random sampling-a key we do not use *)
@@ -205,14 +206,15 @@ wp; call (: true).
 by auto.
 qed.
 
-local lemma kem_1_game1_0 &m:
+local lemma EqPr_KEMCPA1_Game10 &m:
     Pr[KEM_CPA_Exp(E_kem, B_kem_0(E_s, A)).run(true) @ &m: res]
   = Pr[Game1.run(false) @ &m: res].
 proof.
 (* Once we know how to do the proof, we can automate more of it *)
 byequiv=> //; proc.
-inline {1} ^r<@.
-swap {1} ^pk0<- -3. swap {1} ^c0<- & +1 @^pk0<- & +1.
+inline {1} 4.
+swap {1} 4 -2.
+swap {1} 7 -4.
 sim.
 call (: true); wp.
 conseq (: ={k1, k0, pk, sk, m1, m0, glob E_s, glob A}
@@ -220,14 +222,14 @@ conseq (: ={k1, k0, pk, sk, m1, m0, glob E_s, glob A}
 by sim.
 qed.
 
-local lemma Hop1 &m:
+local lemma GameHop1 &m:
   `| Pr[PKE_CPA_Exp(KEMDEM(E_kem, E_s), A).run(false) @ &m: res]
    - Pr[Game1.run(false) @ &m: res] |
  = `| Pr[KEM_CPA_Exp(E_kem, B_kem_0(E_s, A)).run(false) @ &m: res]
     - Pr[KEM_CPA_Exp(E_kem, B_kem_0(E_s, A)).run(true) @ &m: res] |.
-proof. by rewrite (pke_0_kem_0 &m) -(kem_1_game1_0 &m). qed.
+proof. by rewrite (EqPr_PKECPA0_KEMCPA0 &m) -(EqPr_KEMCPA1_Game10 &m). qed.
 
-local lemma Hop2 &m:
+local lemma GameHop2 &m:
   `| Pr[Game1.run(false) @ &m: res]
    - Pr[Game1.run(true) @ &m: res] |
   = `| Pr[DEM_1CPA_Exp(E_s, B_s(E_kem, A)).run(false) @ &m: res]
@@ -237,31 +239,33 @@ proof.
 have ->: Pr[Game1.run(false) @ &m: res]
        = Pr[DEM_1CPA_Exp(E_s, B_s(E_kem, A)).run(false) @ &m: res].
 + byequiv=> //; proc.
-  inline {2} ^r<@.
-  swap {2} ^c0<- & +1 -2. swap {2} ^k<$ 2.
+  inline {2} 4.
+  swap {2} 5 -2.
+  swap {2} 1 2.
   inline {2} 1.
   by sim.
 have -> //: Pr[Game1.run(true) @ &m: res]
           = Pr[DEM_1CPA_Exp(E_s, B_s(E_kem, A)).run(true) @ &m: res].
 byequiv=> //; proc.
-swap {2} ^k<$ 1.
-inline {2} ^r<@.
-swap {2} ^c0<- & +1 -3.
+swap {2} 1 1.
+inline {2} 4.
+swap {2} 5 -3.
 inline {2} 1.
 by sim.
 qed.
 
-local lemma Hop3 &m:
-  `| Pr[PKE_CPA_Exp(KEMDEM(E_kem, E_s), A).run(true) @ &m: res]
-   - Pr[Game1.run(true) @ &m: res] |
- = `| Pr[KEM_CPA_Exp(E_kem, B_kem_1(E_s, A)).run(true) @ &m: res]
-    - Pr[KEM_CPA_Exp(E_kem, B_kem_1(E_s, A)).run(false) @ &m: res] |.
+local lemma GameHop3 &m:
+  `| Pr[Game1.run(true) @ &m: res]
+     - Pr[PKE_CPA_Exp(KEMDEM(E_kem, E_s), A).run(true) @ &m: res] |
+ = `| Pr[KEM_CPA_Exp(E_kem, B_kem_1(E_s, A)).run(false) @ &m: res]
+    - Pr[KEM_CPA_Exp(E_kem, B_kem_1(E_s, A)).run(true) @ &m: res] |.
 proof.
 have ->: Pr[PKE_CPA_Exp(KEMDEM(E_kem, E_s), A).run(true) @ &m: res]
        = Pr[KEM_CPA_Exp(E_kem, B_kem_1(E_s, A)).run(false) @ &m: res].
 + byequiv=> //; proc.
   inline *.
-  swap {1} ^pk0<- -1. swap {1} 5 -2.
+  swap {1} 3 -1.
+  swap {1} 5 -2.
   wp; call (: true).
   wp; call (: true).
   wp; call (: true).
@@ -271,7 +275,8 @@ have -> /#: Pr[Game1.run(true) @ &m: res]
           = Pr[KEM_CPA_Exp(E_kem, B_kem_1(E_s, A)).run(true) @ &m: res].
 byequiv=> //; proc.
 inline *.
-swap {2} ^pk0<- -3. swap {2} 8 -5.
+swap {2} 4 -2.
+swap {2} 7 -4.
 sim.
 wp; call (: true).
 wp; rnd.
@@ -281,7 +286,7 @@ by wp; call (: true).
 qed.
 
 (* We can finally conclude! *)
-lemma security_of_kem_dem &m:
+lemma KEMDEM_PKECPA_Security &m:
   `| Pr[PKE_CPA_Exp(KEMDEM(E_kem, E_s), A).run(false) @ &m: res]
    - Pr[PKE_CPA_Exp(KEMDEM(E_kem, E_s), A).run(true) @ &m: res]|
   <= `| Pr[KEM_CPA_Exp(E_kem, B_kem_0(E_s, A)).run(false) @ &m: res]
@@ -290,8 +295,8 @@ lemma security_of_kem_dem &m:
       - Pr[KEM_CPA_Exp(E_kem, B_kem_1(E_s, A)).run(true) @ &m: res] |
    + `| Pr[DEM_1CPA_Exp(E_s, B_s(E_kem, A)).run(false) @ &m: res]
       - Pr[DEM_1CPA_Exp(E_s, B_s(E_kem, A)).run(true) @ &m: res] |.
-proof. smt(Hop1 Hop2 Hop3). qed.
+proof. smt(GameHop1 GameHop2 GameHop3). qed.
 
 end section.
 
-print security_of_kem_dem.
+print KEMDEM_PKECPA_Security.

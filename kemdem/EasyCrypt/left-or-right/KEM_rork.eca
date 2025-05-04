@@ -17,8 +17,8 @@ op [lossless full uniform] dkey : key distr.
 **)
 module type KEM = {
   proc keygen(): pkey * skey
-  proc enc(pk : pkey): key * ctxt
-  proc dec(sk : skey, k : ctxt): key option
+  proc encaps(pk : pkey): key * ctxt
+  proc decaps(sk : skey, k : ctxt): key option
 }.
 
 (** A CPA adversary against the KEM is an algorithm: **)
@@ -36,14 +36,13 @@ module type KEM_CPA_Adv = {
 **)
 module KEM_CPA_Exp (E : KEM) (A : KEM_CPA_Adv) = {
   proc run(b : bool) = {
-    var pk, sk, k0, k1, k, c, r;
+    var pk, sk, k0, k1, c, b';
 
     (pk, sk) <@ E.keygen();
-    (k0, c) <@ E.enc(pk);
+    (k0, c) <@ E.encaps(pk);
     k1 <$ dkey;
-    k <- if b then k1 else k0;
-    r <@ A.distinguish(pk, k, c);
-    return r;
+    b' <@ A.distinguish(pk, if b then k1 else k0, c);
+    return b';
   }
 }.
 
