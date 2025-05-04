@@ -9,7 +9,7 @@ require (*--*) KEM_rork DEM_lor PKE_lor.
 
 (* Given sets of public keys, secret keys, plaintexts, DEM keys, KEM
    ciphertexts and DEM ciphertexts ... *)
-type pkey, skey, pt, key, kct, dct.
+type pkey, skey, ptxt, key, kct, dct.
 
 (* ... and the uniform distribution over the DEM key space *)
 op [lossless full uniform] dkey : key distr.
@@ -35,7 +35,7 @@ realize dkey_fu  by exact: dkey_fu.
 **)
 clone import DEM_lor as DEM with
   type key  <- key,
-  type ptxt <- pt,
+  type ptxt <- ptxt,
   type ctxt <- dct,
   op   dkey <- dkey,
   (* An alternative way of discharging assumptions *)
@@ -51,7 +51,7 @@ proof *.
 clone import PKE_lor as PKE with
   type pkey <- pkey,
   type skey <- skey,
-  type ptxt <- pt,
+  type ptxt <- ptxt,
   type ctxt <- kct * dct
 proof *.
 
@@ -59,7 +59,7 @@ proof *.
 module KEMDEM (E_kem : KEM) (E_s : DEM): PKE = {
   proc keygen = E_kem.keygen
 
-  proc enc(pk : pkey, m : pt): kct * dct = {
+  proc enc(pk : pkey, m : ptxt): kct * dct = {
     var k, kc, c;
 
     (k, kc) <@ E_kem.encaps(pk);
@@ -67,7 +67,7 @@ module KEMDEM (E_kem : KEM) (E_s : DEM): PKE = {
     return (kc, c);
   }
 
-  proc dec(sk : skey, c : kct * dct): pt option = {
+  proc dec(sk : skey, c : kct * dct): ptxt option = {
     var kc, dc, r, k, m;
 
     (kc, dc) <- c;
