@@ -1,0 +1,33 @@
+on:
+  push:
+  pull_request:
+
+env:
+  HOME: /home/charlie
+  OPAMYES: true
+  OPAMJOBS: 2
+
+jobs:
+  kemdem:
+    name: Check KEM+DEM in EC
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/easycrypt/ec-build-box
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [lor-monolith, left-or-right, multi-challenge]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install and Setup EasyCrypt
+      run: |
+        opam install --deps-only --depext-only --confirm-level=unsafe-yes easycrypt
+        opam install --deps-only easycrypt
+        opam install easycrypt
+        rm -f ~/.why3.conf
+        opam exec -- easycrypt why3config -why3 ~/.why3.conf
+    - name: Check proof KEM+DEM / ${{ matrix.target }}
+      env:
+        TARGET: ${{ matrix.target }}
+      run: opam exec -- easycrypt runtest kemdem/EasyCrypt/proofs.config
+
