@@ -1,0 +1,50 @@
+name: Check Domino Proofs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'kemdem/Domino/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'kemdem/Domino/**'
+  workflow_dispatch:
+
+env:
+  DOMINO_REV: "b4b6893b10c62493025846ce4ebf2ef87a8d7972"
+
+jobs:
+  kemdem:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cvc5
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cvc5
+
+      - name: Cache cargo installation
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/domino
+          key: domino-${{ env.DOMINO_REV }}
+
+      - name: Install Domino
+        run: |
+          if ! command -v domino &> /dev/null; then
+            cargo install \
+              --git https://github.com/domino-lang/domino domino \
+              --rev ${{ env.DOMINO_REV }}
+          fi
+
+      - name: Run Domino prove
+        run: |
+          cd kemdem/Domino
+          domino prove
